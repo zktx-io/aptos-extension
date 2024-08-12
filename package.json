@@ -20,6 +20,7 @@
     ]
   },
   "scripts": {
+    "install:all": "npm install && cd src/webview && npm install",
     "vscode:prepublish": "npm run package",
     "compile": "webpack",
     "watch": "webpack --watch",
