@@ -4,6 +4,7 @@ import { getNonce } from './utilities/getNonce';
 import { hasTerminal } from './utilities/hasTerminal';
 import { COMMENDS } from './utilities/types';
 import { FileWathcer } from './utilities/fileWatcher';
+import { tokenLoad, tokenStore } from './utilities/proof';
 
 const COMPILER = 'aptos';
 const ByteDump = 'bytecode.dump.json';
@@ -72,51 +73,59 @@ export class WebviewViewProvider implements vscode.WebviewViewProvider {
       this._extensionUri,
     );
 
-    webviewView.webview.onDidReceiveMessage(async ({ command, data }) => {
-      switch (command) {
-        case COMMENDS.Env:
-          this._view?.webview.postMessage({
-            command,
-            env: { hasTerminal: hasTerminal() },
-          });
-          break;
-        case COMMENDS.PackageList:
-          await this._fileWatcher?.initializePackageList();
-          break;
-        case COMMENDS.PackageSelect:
-          {
-            const upgradeToml = await this._fileWatcher?.getUpgradeToml(data);
+    webviewView.webview.onDidReceiveMessage(
+      async ({ command, data }: { command: COMMENDS; data: string }) => {
+        switch (command) {
+          case COMMENDS.Env:
+            const proof = tokenLoad(this._context);
             this._view?.webview.postMessage({
-              command: COMMENDS.PackageSelect,
-              package: { path: data, upgradeToml },
+              command,
+              env: !proof
+                ? { hasTerminal: hasTerminal() }
+                : { hasTerminal: hasTerminal(), proof },
             });
-          }
-          break;
-        case COMMENDS.Compile:
-          if (!hasTerminal()) {
+            break;
+          case COMMENDS.StoreToken:
+            await tokenStore(this._context, data);
+            break;
+          case COMMENDS.PackageList:
+            await this._fileWatcher?.initializePackageList();
+            break;
+          case COMMENDS.PackageSelect:
+            {
+              const upgradeToml = await this._fileWatcher?.getUpgradeToml(data);
+              this._view?.webview.postMessage({
+                command: COMMENDS.PackageSelect,
+                package: { path: data, upgradeToml },
+              });
+            }
+            break;
+          case COMMENDS.Compile:
+            if (!hasTerminal()) {
+              vscode.window.showErrorMessage(
+                'This environment does not support terminal operations.',
+              );
+            } else {
+              this.compile(data);
+            }
+            break;
+          case COMMENDS.UintTest:
+            if (!hasTerminal()) {
+              vscode.window.showErrorMessage(
+                'This environment does not support terminal operations.',
+              );
+            } else {
+              this.unitTest(data);
+            }
+            break;
+          default:
             vscode.window.showErrorMessage(
-              'This environment does not support terminal operations.',
+              `Unknown command received :, ${command}`,
             );
-          } else {
-            this.compile(data);
-          }
-          break;
-        case COMMENDS.UintTest:
-          if (!hasTerminal()) {
-            vscode.window.showErrorMessage(
-              'This environment does not support terminal operations.',
-            );
-          } else {
-            this.unitTest(data);
-          }
-          break;
-        default:
-          vscode.window.showErrorMessage(
-            `Unknown command received :, ${command}`,
-          );
-          break;
-      }
-    });
+            break;
+        }
+      },
+    );
   }
 
   private _getHtmlForWebview(
