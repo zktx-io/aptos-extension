@@ -15,13 +15,11 @@ export class WebviewViewProvider implements vscode.WebviewViewProvider {
 
   private readonly _context;
   private readonly _extensionUri: vscode.Uri;
-  private readonly _title: string;
   private _fileWatcher?: FileWathcer;
 
-  constructor(context: vscode.ExtensionContext, title: string) {
+  constructor(context: vscode.ExtensionContext) {
     this._context = context;
     this._extensionUri = context.extensionUri;
-    this._title = title;
   }
 
   private runTerminal(runCommand: string) {
@@ -158,7 +156,6 @@ export class WebviewViewProvider implements vscode.WebviewViewProvider {
                 <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
                 <meta name="theme-color" content="#000000">
                 <link nonce="${nonce}" rel="stylesheet" type="text/css" href="${stylesUri}">
-                <title>${this._title}</title>
               </head>
               <body>
                 <noscript>You need to enable JavaScript to run this app.</noscript>

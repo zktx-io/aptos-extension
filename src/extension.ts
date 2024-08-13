@@ -3,7 +3,7 @@ import { commands, ExtensionContext } from 'vscode';
 import { WebviewViewProvider } from './webviewPovider';
 
 export function activate(context: ExtensionContext) {
-  const provider = new WebviewViewProvider(context, 'Aptos Extension');
+  const provider = new WebviewViewProvider(context);
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
       WebviewViewProvider.viewType,
