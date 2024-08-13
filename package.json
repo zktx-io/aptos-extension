@@ -9,15 +9,32 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
-  "main": "./dist/extension.js",
+  "icon": "media/icon.png",
+  "activationEvents": [
+    "onView:webviewViewProvider"
+  ],
+  "main": "./out/extension.js",
+  "browser": "./out/web/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "aptos-extension.helloWorld",
-        "title": "Hello World"
-      }
-    ]
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "extensionSidebar",
+          "title": "Aptos Extension",
+          "icon": "media/icon.png"
+        }
+      ]
+    },
+    "views": {
+      "extensionSidebar": [
+        {
+          "type": "webview",
+          "id": "webviewViewProvider",
+          "name": "Aptos Extension",
+          "icon": "media/icon.png"
+        }
+      ]
+    }
   },
   "scripts": {
     "open-in-browser": "npm run build:all && vscode-test-web --extensionDevelopmentPath=. .",
@@ -47,7 +64,9 @@
     "@vscode/test-electron": "^2.4.0",
     "@vscode/test-web": "^0.0.56",
     "eslint": "^8.57.0",
+    "path-browserify": "^1.0.1",
     "prettier": "^3.3.3",
+    "process": "^0.11.10",
     "ts-loader": "^9.5.1",
     "typescript": "^5.4.5",
     "webpack": "^5.92.1",

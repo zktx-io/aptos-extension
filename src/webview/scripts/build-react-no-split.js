@@ -9,10 +9,10 @@
  * single (consistently named) JavaScript and CSS file when configuring webviews.
  */
 
-const rewire = require("rewire");
-const webpack = require("webpack");
-const defaults = rewire("react-scripts/scripts/build.js");
-const config = defaults.__get__("config");
+const rewire = require('rewire');
+const webpack = require('webpack');
+const defaults = rewire('react-scripts/scripts/build.js');
+const config = defaults.__get__('config');
 
 // Disable code splitting
 config.optimization.splitChunks = {
@@ -25,23 +25,23 @@ config.optimization.splitChunks = {
 config.optimization.runtimeChunk = false;
 
 // Rename main.{hash}.js to main.js
-config.output.filename = "static/js/[name].js";
+config.output.filename = 'static/js/[name].js';
 
 // Rename main.{hash}.css to main.css
-config.plugins[5].options.filename = "static/css/[name].css";
-config.plugins[5].options.moduleFilename = () => "static/css/main.css";
+config.plugins[5].options.filename = 'static/css/[name].css';
+config.plugins[5].options.moduleFilename = () => 'static/css/main.css';
 
 config.resolve = {
   ...config.resolve,
   fallback: {
     ...config.resolve.fallback,
-    buffer: require.resolve("buffer/"),
+    buffer: require.resolve('buffer/'),
   },
 };
 
 config.plugins = [
   ...config.plugins,
   new webpack.ProvidePlugin({
-    Buffer: ["buffer", "Buffer"],
+    Buffer: ['buffer', 'Buffer'],
   }),
 ];
