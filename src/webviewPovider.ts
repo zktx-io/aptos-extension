@@ -2,11 +2,12 @@ import * as vscode from 'vscode';
 import { getUri } from './utilities/getUri';
 import { getNonce } from './utilities/getNonce';
 import { hasTerminal } from './utilities/hasTerminal';
-import { COMMENDS } from './utilities/types';
+import { COMMENDS } from './webview/src/utilities/commends';
 import { FileWathcer } from './utilities/fileWatcher';
 import { tokenLoad, tokenStore } from './utilities/proof';
 
 const COMPILER = 'aptos';
+const MoveToml = 'Move.toml';
 const ByteDump = 'bytecode.dump.json';
 
 export class WebviewViewProvider implements vscode.WebviewViewProvider {
@@ -55,15 +56,12 @@ export class WebviewViewProvider implements vscode.WebviewViewProvider {
     _token: vscode.CancellationToken,
   ) {
     this._view = webviewView;
-    this._fileWatcher = new FileWathcer(
-      webviewView,
-      this._context,
-      'Move.toml',
-    );
+    this._fileWatcher = new FileWathcer(webviewView, this._context, MoveToml);
 
     webviewView.webview.options = {
       enableScripts: true,
       localResourceRoots: [this._extensionUri],
+      enableCommandUris: true,
     };
 
     webviewView.webview.html = this._getHtmlForWebview(
@@ -82,6 +80,9 @@ export class WebviewViewProvider implements vscode.WebviewViewProvider {
                 ? { hasTerminal: hasTerminal() }
                 : { hasTerminal: hasTerminal(), proof },
             });
+            break;
+          case COMMENDS.Login:
+            vscode.env.openExternal(vscode.Uri.parse(data));
             break;
           case COMMENDS.StoreToken:
             await tokenStore(this._context, data);

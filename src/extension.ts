@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { commands, ExtensionContext } from 'vscode';
+import { ExtensionContext } from 'vscode';
 import { WebviewViewProvider } from './webviewPovider';
 
 export function activate(context: ExtensionContext) {

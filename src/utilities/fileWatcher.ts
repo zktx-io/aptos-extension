@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { COMMENDS } from './types';
+import { COMMENDS } from '../webview/src/utilities/commends';
 
 const MoveToml = 'Move.toml';
 const UpgradeToml = 'Upgrade.toml';
@@ -15,7 +15,6 @@ export class FileWathcer {
     fileName: string,
   ) {
     this._view = view;
-    vscode.commands.executeCommand('extension.openFileInWebview');
     const watcher = vscode.workspace.createFileSystemWatcher(`**/${fileName}`);
 
     watcher.onDidChange(async (uri) => {
