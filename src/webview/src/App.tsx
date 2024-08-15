@@ -93,7 +93,7 @@ function App() {
       <VSCodeDropdown
         style={{ width: '100%', marginBottom: '8px' }}
         value={network}
-        disabled={!state}
+        disabled={!state || !!address}
         onChange={(e) => {
           e.target && setNetwork((e.target as any).value);
         }}
