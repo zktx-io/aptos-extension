@@ -21,7 +21,7 @@ export const createNonce = async (
   return {
     nonce,
     expiration: expiryDateSecs,
-    randomness: Buffer.from(blinder).toString('base64'),
+    randomness: `0x${Buffer.from(blinder).toString('hex')}`,
     ephemeralKeyPair: {
       publicKey: account.publicKey.toString(),
       secretKey: account.privateKey.toString(),
