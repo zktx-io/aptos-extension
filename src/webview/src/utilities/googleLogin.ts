@@ -5,19 +5,26 @@ import * as querystring from 'querystring';
 import { vscode } from './vscode';
 import { ClientId, COMMENDS, PkceUrl } from './commends';
 
-const generateLoginUrl = (state: string, codeChallenge: string): string => {
-  return `https://accounts.google.com/o/oauth2/auth?${querystring.stringify({
-    response_type: 'code',
-    client_id: ClientId,
-    redirect_uri: `${PkceUrl}/callback`,
-    scope: 'openid profile email',
-    state,
-    code_challenge_method: 'S256',
-    code_challenge: codeChallenge,
-  })}`;
+const generateLoginUrl = (
+  state: string,
+  codeChallenge: string,
+  nonce: string,
+): string => {
+  return `https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?${querystring.stringify(
+    {
+      response_type: 'code',
+      client_id: ClientId,
+      redirect_uri: `${PkceUrl}/callback`,
+      scope: 'openid profile email',
+      nonce,
+      state,
+      code_challenge_method: 'S256',
+      code_challenge: codeChallenge,
+    },
+  )}`;
 };
 
-export const googleLogin = async () => {
+export const googleLogin = async (nonce: string) => {
   const codeVerifier = uuidv4().replace(/-/g, '');
   const state = uuidv4().replace(/-/g, '');
   const codeChallenge = Base64.stringify(SHA256(codeVerifier))
@@ -28,7 +35,7 @@ export const googleLogin = async () => {
   vscode.postMessage({
     command: COMMENDS.Login,
     data: {
-      url: generateLoginUrl(state, codeChallenge),
+      url: generateLoginUrl(state, codeChallenge, nonce),
       state,
       codeVerifier,
     },
