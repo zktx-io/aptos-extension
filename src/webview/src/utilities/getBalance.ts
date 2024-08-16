@@ -20,6 +20,6 @@ export const getBalance = async (account: IAccount): Promise<string> => {
       throw new Error(`${error}`);
     }
   } else {
-    return 'n/a'
+    return 'n/a';
   }
 };
