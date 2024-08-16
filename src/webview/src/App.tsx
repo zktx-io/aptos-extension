@@ -80,7 +80,6 @@ function App() {
           command: COMMENDS.MsgError,
           data: `${error}`,
         });
-
       }
     };
 
@@ -170,7 +169,7 @@ function App() {
               const res = await packagePublish(account, message.data);
               vscode.postMessage({
                 command: COMMENDS.MsgInfo,
-                data: `success: ${account.nonce.network}:${res.digest}`,
+                data: `success: ${account.nonce.network}:${res.hash}`,
               });
             } else if (!!account?.zkAddress) {
               const res = await packageUpgrade(
