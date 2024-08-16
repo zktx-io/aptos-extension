@@ -4,7 +4,6 @@ import { COMMENDS } from '../webview/src/utilities/commends';
 import { ByteDump } from '../config';
 
 const MoveToml = 'Move.toml';
-const UpgradeToml = 'Upgrade.toml';
 
 export class FileWathcer {
   private _view: vscode.WebviewView;
@@ -58,19 +57,6 @@ export class FileWathcer {
       this.updateWebview();
     } catch (error) {
       vscode.window.showErrorMessage(`Error initializing file list: ${error}`);
-    }
-  }
-
-  public async getUpgradeToml(path: string): Promise<string> {
-    try {
-      const uri = this.getUriFromRelativePath(`${path}/${UpgradeToml}`);
-      if (uri) {
-        const content = await this.readFileContent(uri);
-        return new TextDecoder().decode(content);
-      }
-      return '';
-    } catch (error) {
-      return '';
     }
   }
 
@@ -130,8 +116,7 @@ export class FileWathcer {
       const fileContent = await vscode.workspace.fs.readFile(uri);
       return fileContent;
     } catch (error) {
-      uri.path.split('/').pop() !== UpgradeToml &&
-        vscode.window.showErrorMessage(`Error reading file: ${error}`);
+      vscode.window.showErrorMessage(`Error reading file: ${error}`);
       return new Uint8Array();
     }
   }

@@ -19,7 +19,6 @@ import { createNonce } from './utilities/createNonce';
 import { createProof } from './utilities/createProof';
 
 import { packagePublish } from './utilities/packagePublish';
-import { packageUpgrade } from './utilities/packageUpgrade';
 import { getBalance } from './utilities/getBalance';
 
 function App() {
@@ -39,7 +38,6 @@ function App() {
   const [fileList, setFileList] = useState<
     { path: string; name: string; version: string }[]
   >([]);
-  const [upgradeToml, setUpgradeToml] = useState<string>('');
 
   const handleLogin = async () => {
     setLogin(true);
@@ -152,34 +150,22 @@ function App() {
               });
             } else {
               setSelectedPath(undefined);
-              setUpgradeToml('');
             }
           }
           break;
         case COMMENDS.PackageSelect:
           {
-            const { path, data } = message.data;
+            const { path } = message.data;
             setSelectedPath(path);
-            setUpgradeToml(data);
           }
           break;
         case COMMENDS.Deploy:
           try {
-            if (!upgradeToml && !!account?.zkAddress) {
+            if (!!account?.zkAddress) {
               const res = await packagePublish(account, message.data);
               vscode.postMessage({
                 command: COMMENDS.MsgInfo,
                 data: `success: ${account.nonce.network}:${res.hash}`,
-              });
-            } else if (!!account?.zkAddress) {
-              const res = await packageUpgrade(
-                account,
-                message.data,
-                upgradeToml,
-              );
-              vscode.postMessage({
-                command: COMMENDS.MsgInfo,
-                data: `success: ${account.nonce.network}:${res.digest}`,
               });
             }
           } catch (error) {
@@ -208,7 +194,7 @@ function App() {
     return () => {
       window.removeEventListener('message', handleMessage);
     };
-  }, [account, selectedPath, setAccount, upgradeToml]);
+  }, [account, selectedPath, setAccount]);
 
   return (
     <>
@@ -355,7 +341,7 @@ function App() {
           }
         }}
       >
-        {!upgradeToml ? 'Deploy' : 'Upgrade'}
+        Deploy
       </VSCodeButton>
     </>
   );

@@ -112,10 +112,9 @@ export class WebviewViewProvider implements vscode.WebviewViewProvider {
             break;
           case COMMENDS.PackageSelect:
             {
-              const upgradeToml = await this._fileWatcher?.getUpgradeToml(data);
               this._view?.webview.postMessage({
                 command: COMMENDS.PackageSelect,
-                data: { path: data, data: upgradeToml || '' },
+                data: { path: data },
               });
             }
             break;
