@@ -82,13 +82,16 @@ function App() {
           break;
         case COMMENDS.LoginJwt:
           if (account && message.data) {
-            const { address } = await createProof(account.nonce, message.data);
+            const { address, proof, salt } = await createProof(
+              account.nonce,
+              message.data,
+            );
             setAccount({
               ...account,
               zkAddress: {
                 address,
-                proof: '',
-                salt: '',
+                proof,
+                salt,
                 jwt: message.data,
               },
             });
@@ -98,8 +101,8 @@ function App() {
                 ...account,
                 zkAddress: {
                   address,
-                  proof: '',
-                  salt: '',
+                  proof,
+                  salt,
                   jwt: message.data,
                 },
               },
@@ -110,40 +113,44 @@ function App() {
           }
           break;
         case COMMENDS.PackageList:
-          const temp = (
-            message.data as { path: string; content: string }[]
-          ).map(({ path, content }) => {
-            const parsed = parse(content);
-            return {
-              path,
-              name: (parsed.package as any).name,
-              version: (parsed.package as any).version,
-            };
-          });
-          setFileList(temp);
-          if (temp.length > 0) {
-            const tempPath =
-              selectedPath && temp.find(({ path }) => path === selectedPath)
-                ? selectedPath
-                : temp[0].path;
-            vscode.postMessage({
-              command: COMMENDS.PackageSelect,
-              data: tempPath,
+          {
+            const temp = (
+              message.data as { path: string; content: string }[]
+            ).map(({ path, content }) => {
+              const parsed = parse(content);
+              return {
+                path,
+                name: (parsed.package as any).name,
+                version: (parsed.package as any).version,
+              };
             });
-          } else {
-            setSelectedPath(undefined);
-            setUpgradeToml('');
+            setFileList(temp);
+            if (temp.length > 0) {
+              const tempPath =
+                selectedPath && temp.find(({ path }) => path === selectedPath)
+                  ? selectedPath
+                  : temp[0].path;
+              vscode.postMessage({
+                command: COMMENDS.PackageSelect,
+                data: tempPath,
+              });
+            } else {
+              setSelectedPath(undefined);
+              setUpgradeToml('');
+            }
           }
           break;
         case COMMENDS.PackageSelect:
-          const { path, upgradeToml } = message.data;
-          setSelectedPath(path);
-          setUpgradeToml(upgradeToml);
+          {
+            const { path, upgradeToml: temp } = message.data;
+            setSelectedPath(path);
+            setUpgradeToml(temp);
+          }
           break;
         case COMMENDS.Deploy:
-          if (!upgradeToml && !!account && !!account.zkAddress) {
+          if (!upgradeToml && !!account?.zkAddress) {
             await packagePublish(account, message.data);
-          } else if (!!account && !!account.zkAddress) {
+          } else if (!!account?.zkAddress) {
             await packageUpgrade(account, message.data, upgradeToml);
           }
           setLoading(false);
@@ -163,7 +170,7 @@ function App() {
     return () => {
       window.removeEventListener('message', handleMessage);
     };
-  }, [account, selectedPath, setAccount]);
+  }, [account, selectedPath, setAccount, upgradeToml]);
 
   return (
     <>

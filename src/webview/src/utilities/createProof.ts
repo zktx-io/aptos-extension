@@ -9,7 +9,7 @@ import { INonce } from '../recoil';
 export const createProof = async (
   { network, expiration, randomness, secretKey }: INonce,
   jwt: string,
-): Promise<{ address: string }> => {
+): Promise<{ address: string; proof: string; salt: string }> => {
   if (secretKey) {
     const ephemeralKeyPair = new EphemeralKeyPair({
       privateKey: new Ed25519PrivateKey(secretKey),
@@ -22,6 +22,8 @@ export const createProof = async (
       ephemeralKeyPair,
     });
     return {
+      proof: '',
+      salt: '',
       address: keylessAccount.accountAddress.toString(),
     };
   }
