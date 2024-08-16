@@ -9,6 +9,8 @@ import {
 import { useRecoilState } from 'recoil';
 import { parse } from 'smol-toml';
 
+import './App.css';
+
 import { ACCOUNT, NETWORK, NETWORKS } from './recoil';
 import { vscode } from './utilities/vscode';
 import { COMMENDS } from './utilities/commends';
@@ -16,15 +18,16 @@ import { googleLogin } from './utilities/googleLogin';
 import { createNonce } from './utilities/createNonce';
 import { createProof } from './utilities/createProof';
 
-import './App.css';
 import { packagePublish } from './utilities/packagePublish';
 import { packageUpgrade } from './utilities/packageUpgrade';
+import { getBalance } from './utilities/getBalance';
 
 function App() {
   const initialized = useRef<boolean>(false);
 
   const [account, setAccount] = useRecoilState(ACCOUNT);
   const [network, setNetwork] = useState<NETWORK>(NETWORK.DevNet);
+  const [balance, setBalance] = useState<string>('n/a');
 
   const [login, setLogin] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -44,7 +47,7 @@ function App() {
       nonce,
       expiration,
       randomness,
-      ephemeralKeyPair: { publicKey, secretKey },
+      ephemeralKeyPair: { publicKey, privateKey },
     } = await createNonce(network);
     setAccount({
       nonce: {
@@ -52,7 +55,7 @@ function App() {
         randomness,
         network,
         publicKey,
-        secretKey,
+        privateKey,
       },
     });
     await googleLogin(nonce);
@@ -67,6 +70,20 @@ function App() {
   };
 
   useEffect(() => {
+    const updateBalance = async () => {
+      try {
+        const value = account && (await getBalance(account));
+        setBalance(value || 'n/a');
+      } catch (error) {
+        setBalance('n/a');
+        vscode.postMessage({
+          command: COMMENDS.MsgError,
+          data: `${error}`,
+        });
+
+      }
+    };
+
     const handleMessage = async (event: any) => {
       const message = event.data;
       switch (message.command) {
@@ -142,18 +159,38 @@ function App() {
           break;
         case COMMENDS.PackageSelect:
           {
-            const { path, upgradeToml: temp } = message.data;
+            const { path, data } = message.data;
             setSelectedPath(path);
-            setUpgradeToml(temp);
+            setUpgradeToml(data);
           }
           break;
         case COMMENDS.Deploy:
-          if (!upgradeToml && !!account?.zkAddress) {
-            await packagePublish(account, message.data);
-          } else if (!!account?.zkAddress) {
-            await packageUpgrade(account, message.data, upgradeToml);
+          try {
+            if (!upgradeToml && !!account?.zkAddress) {
+              const res = await packagePublish(account, message.data);
+              vscode.postMessage({
+                command: COMMENDS.MsgInfo,
+                data: `success: ${account.nonce.network}:${res.digest}`,
+              });
+            } else if (!!account?.zkAddress) {
+              const res = await packageUpgrade(
+                account,
+                message.data,
+                upgradeToml,
+              );
+              vscode.postMessage({
+                command: COMMENDS.MsgInfo,
+                data: `success: ${account.nonce.network}:${res.digest}`,
+              });
+            }
+          } catch (error) {
+            vscode.postMessage({
+              command: COMMENDS.MsgError,
+              data: `${error}`,
+            });
+          } finally {
+            setLoading(false);
           }
-          setLoading(false);
           break;
         default:
           break;
@@ -167,6 +204,8 @@ function App() {
       vscode.postMessage({ command: COMMENDS.Env });
     }
 
+    updateBalance();
+
     return () => {
       window.removeEventListener('message', handleMessage);
     };
@@ -176,10 +215,18 @@ function App() {
     <>
       <label style={{ fontSize: '11px', color: 'GrayText' }}>ACCOUNT</label>
       <VSCodeTextField
-        style={{ width: '100%', marginBottom: '8px' }}
+        style={{ width: '100%' }}
         readOnly
         value={account?.zkAddress?.address || ''}
       />
+      <div
+        style={{
+          fontSize: '11px',
+          color: 'GrayText',
+          marginBottom: '8px',
+          textAlign: 'right',
+        }}
+      >{`Balance: ${balance}`}</div>
 
       <label style={{ fontSize: '11px', color: 'GrayText' }}>NETWORK</label>
       <VSCodeDropdown

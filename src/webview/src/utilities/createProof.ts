@@ -7,12 +7,12 @@ import {
 import { INonce } from '../recoil';
 
 export const createProof = async (
-  { network, expiration, randomness, secretKey }: INonce,
+  { network, expiration, randomness, privateKey }: INonce,
   jwt: string,
 ): Promise<{ address: string; proof: string; salt: string }> => {
-  if (secretKey) {
+  if (privateKey) {
     const ephemeralKeyPair = new EphemeralKeyPair({
-      privateKey: new Ed25519PrivateKey(secretKey),
+      privateKey: new Ed25519PrivateKey(privateKey),
       blinder: randomness,
       expiryDateSecs: expiration,
     });

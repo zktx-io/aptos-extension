@@ -11,7 +11,7 @@ export const createNonce = async (
   nonce: string;
   expiration: number;
   randomness: string;
-  ephemeralKeyPair: { publicKey: string; secretKey: string };
+  ephemeralKeyPair: { publicKey: string; privateKey: string };
 }> => {
   const account = Account.generate({ scheme: SigningSchemeInput.Ed25519 });
   const { expiryDateSecs, blinder, nonce } = new EphemeralKeyPair({
@@ -24,7 +24,7 @@ export const createNonce = async (
     randomness: `0x${Buffer.from(blinder).toString('hex')}`,
     ephemeralKeyPair: {
       publicKey: account.publicKey.toString(),
-      secretKey: account.privateKey.toString(),
+      privateKey: account.privateKey.toString(),
     },
   };
 };
