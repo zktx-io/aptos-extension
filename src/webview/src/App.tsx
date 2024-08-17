@@ -74,10 +74,6 @@ function App() {
         setBalance(value || 'n/a');
       } catch (error) {
         setBalance('n/a');
-        vscode.postMessage({
-          command: COMMENDS.MsgError,
-          data: `${error}`,
-        });
       }
     };
 
@@ -167,6 +163,7 @@ function App() {
                 command: COMMENDS.MsgInfo,
                 data: `success: ${account.nonce.network}:${res.hash}`,
               });
+              await updateBalance();
             }
           } catch (error) {
             vscode.postMessage({

@@ -1,7 +1,6 @@
 import {
   Aptos,
   AptosConfig,
-  CommittedTransactionResponse,
   Ed25519PrivateKey,
   EphemeralKeyPair,
   HexInput,
@@ -11,7 +10,7 @@ import { IAccount } from '../recoil';
 export const packagePublish = async (
   account: IAccount,
   dumpByte: string,
-): Promise<CommittedTransactionResponse> => {
+): Promise<{ hash: string; packageId: string }> => {
   if (account.nonce.privateKey && account.zkAddress) {
     try {
       const client = new Aptos(
@@ -44,7 +43,7 @@ export const packagePublish = async (
       if (!res.success) {
         throw new Error(`error: ${res.hash}`);
       }
-      return res;
+      return { hash: res.hash, packageId: account.zkAddress.address };
     } catch (error) {
       throw new Error(`${error}`);
     }
