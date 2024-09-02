@@ -34,7 +34,7 @@ export const signAndExcute = async (
         vscode.postMessage({
           command: COMMENDS.OutputError,
           data: JSON.stringify(res, null, 4),
-        });  
+        });
         throw new Error(`error: ${res.hash}`);
       }
       vscode.postMessage({
