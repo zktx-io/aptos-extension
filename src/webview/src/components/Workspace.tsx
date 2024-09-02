@@ -72,6 +72,8 @@ export const Workspace = ({
               const { packageId } = await packagePublish(account, message.data);
               update(packageId);
             }
+          } catch (e) {
+            console.error(e);
           } finally {
             setIsLoading(false);
           }
