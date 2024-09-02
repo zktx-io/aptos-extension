@@ -69,18 +69,9 @@ export const Workspace = ({
         case COMMENDS.Deploy:
           try {
             if (!!account?.zkAddress) {
-              const res = await packagePublish(account, message.data);
-              vscode.postMessage({
-                command: COMMENDS.MsgInfo,
-                data: `success: ${account.nonce.network}:${res.hash}`,
-              });
-              update(res.packageId);
+              const { packageId } = await packagePublish(account, message.data);
+              update(packageId);
             }
-          } catch (error) {
-            vscode.postMessage({
-              command: COMMENDS.MsgError,
-              data: `${error}`,
-            });
           } finally {
             setIsLoading(false);
           }
