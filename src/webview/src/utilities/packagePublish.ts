@@ -1,8 +1,4 @@
-import {
-  Aptos,
-  AptosConfig,
-  HexInput,
-} from '@aptos-labs/ts-sdk';
+import { Aptos, AptosConfig, HexInput } from '@aptos-labs/ts-sdk';
 import { IAccount } from '../recoil';
 import { signAndExcute } from './signAndExcute';
 
