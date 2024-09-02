@@ -213,7 +213,7 @@ export const Account = forwardRef<AccountHandles>((props, ref) => {
         >
           <VSCodeButton
             style={{ flex: 1, marginRight: '2px' }}
-            disabled
+            disabled={isLogin || isFaucet}
             onClick={handleFaucet}
           >
             Faucet
