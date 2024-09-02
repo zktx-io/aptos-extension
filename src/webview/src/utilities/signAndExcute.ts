@@ -6,6 +6,8 @@ import {
   SimpleTransaction,
 } from '@aptos-labs/ts-sdk';
 import { IAccount } from '../recoil';
+import { vscode } from './vscode';
+import { COMMENDS } from './commends';
 
 export const signAndExcute = async (
   account: IAccount,
@@ -29,8 +31,16 @@ export const signAndExcute = async (
       });
       const res = await client.waitForTransaction({ transactionHash: hash });
       if (!res.success) {
+        vscode.postMessage({
+          command: COMMENDS.OutputError,
+          data: JSON.stringify(res, null, 4),
+        });  
         throw new Error(`error: ${res.hash}`);
       }
+      vscode.postMessage({
+        command: COMMENDS.OutputInfo,
+        data: JSON.stringify(res, null, 4),
+      });
       return res;
     } catch (error) {
       throw new Error(`${error}`);
