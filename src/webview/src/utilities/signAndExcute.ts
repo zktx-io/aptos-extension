@@ -32,11 +32,19 @@ export const signAndExcute = async (
       const res = await client.waitForTransaction({ transactionHash: hash });
       if (!res.success) {
         vscode.postMessage({
+          command: COMMENDS.MsgError,
+          data: `error: ${res.hash}`,
+        });
+        vscode.postMessage({
           command: COMMENDS.OutputError,
           data: JSON.stringify(res, null, 4),
         });
         throw new Error(`error: ${res.hash}`);
       }
+      vscode.postMessage({
+        command: COMMENDS.MsgInfo,
+        data: `success: ${account.nonce.network}:${res.hash}`,
+      });
       vscode.postMessage({
         command: COMMENDS.OutputInfo,
         data: JSON.stringify(res, null, 4),

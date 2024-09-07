@@ -5,7 +5,7 @@ The Aptos extension provides seamless support for compiling, deploying, and test
 ## Features
 
 - **Compile Aptos Smart Contracts**: Easily compile your Aptos smart contracts from within VS Code.
-- **Deploy and Test**: Deploy and test your smart contracts using the zkLogin-generated wallet, all from within the extension.
+- **Deploy and Test**: Deploy and test your smart contracts using the keyless-generated wallet, all from within the extension.
 - **GitHub Codespaces Integration**: Increase the efficiency of your development workflow with full support for GitHub Codespaces.
 - **Unified Development**: Manage both front-end and back-end code in a single repository for streamlined development.
 - **Upgrade Smart Contracts**: Seamlessly upgrade and test your smart contracts.
