@@ -1,8 +1,7 @@
 import { Aptos } from '@aptos-labs/ts-sdk';
 import { signAndExcute } from './signAndExcute';
-// import { makeParams } from './helper';
-import { IAccount } from '../recoil';
 import { makeParams } from './helper';
+import { IAccount } from '../recoil';
 
 export const moveCall = async (
   client: Aptos,
