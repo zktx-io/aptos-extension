@@ -5,7 +5,12 @@ import {
   VSCodeDropdown,
   VSCodeOption,
 } from '@vscode/webview-ui-toolkit/react';
-import { Aptos, MoveFunction, MoveModuleBytecode } from '@aptos-labs/ts-sdk';
+import {
+  Aptos,
+  MoveFunction,
+  MoveModuleBytecode,
+  MoveValue,
+} from '@aptos-labs/ts-sdk';
 import { VSCodeTextField } from '@vscode/webview-ui-toolkit/react';
 import { vscode } from '../utilities/vscode';
 import { Function } from './Function';
@@ -14,6 +19,7 @@ import { useRecoilState } from 'recoil';
 import { ACCOUNT } from '../recoil';
 import { parameterFilter } from '../utilities/parameterFilter';
 import { moveCall } from '../utilities/moveCall';
+import { moveView } from '../utilities/moveView';
 
 const cardStyles = {
   card: {
@@ -73,6 +79,7 @@ export const Package = ({
   const [module, setModule] = useState<string | undefined>(undefined);
   const [isExcute, setIsExcute] = useState<boolean>(false);
   const [funcWrite, setFuncWrite] = useState<IFunctions | undefined>(undefined);
+  const [funcRead, setFuncRead] = useState<IFunctions | undefined>(undefined);
 
   const onDelete = () => {
     vscode.postMessage({
@@ -85,10 +92,19 @@ export const Package = ({
     name: string,
     func: MoveFunction,
     inputValues: Array<string | string[]>,
-  ) => {
+  ): Promise<MoveValue[] | undefined> => {
     if (account && account.zkAddress && module) {
       try {
         setIsExcute(true);
+        if (func.is_view) {
+          const value = await moveView(
+            client,
+            `${packageId}::${module}::${name}`,
+            inputValues,
+          );
+          setIsExcute(false);
+          return value;
+        }
         await moveCall(
           client,
           account,
@@ -96,9 +112,10 @@ export const Package = ({
           parameterFilter(func),
           inputValues,
         );
+        setIsExcute(false);
+        return undefined;
       } catch (e) {
         console.error(e);
-      } finally {
         setIsExcute(false);
       }
     }
@@ -115,6 +132,12 @@ export const Package = ({
     );
     setFuncWrite(
       Object.keys(entryFunctions).length > 0 ? entryFunctions : undefined,
+    );
+    const viewFunctions = Object.fromEntries(
+      Object.entries(tempData).filter(([, value]) => value.is_view),
+    );
+    setFuncRead(
+      Object.keys(viewFunctions).length > 0 ? viewFunctions : undefined,
     );
   };
 
@@ -200,6 +223,17 @@ export const Package = ({
           ) : (
             <p>No public entry functions found.</p>
           )}
+          {funcRead &&
+            Object.keys(funcRead).map((name, key) => (
+              <Function
+                key={key}
+                isWrire={false}
+                name={name}
+                func={funcRead[name]}
+                isDisable={isExcute}
+                onExcute={onExcute}
+              />
+            ))}
         </div>
       </div>
     </div>

@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
-import { VSCodeTextField } from '@vscode/webview-ui-toolkit/react';
-import { MoveFunction } from '@aptos-labs/ts-sdk';
+import {
+  VSCodeTextArea,
+  VSCodeTextField,
+} from '@vscode/webview-ui-toolkit/react';
+import { MoveFunction, MoveValue } from '@aptos-labs/ts-sdk';
 import { getInterfaceType, validateInput } from '../utilities/helper';
 import { parameterFilter } from '../utilities/parameterFilter';
 import { VectorInputFields } from './VectorInputFields';
@@ -68,14 +71,14 @@ export const Function = ({
     name: string,
     func: MoveFunction,
     inputValues: Array<string | string[]>,
-  ) => Promise<void>;
+  ) => Promise<MoveValue[] | undefined>;
 }) => {
   const [account] = useRecoilState(ACCOUNT);
   const [parameters, setParameters] = useState<string[]>([]);
-  const [returns, setReturns] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [inputValues, setInputValues] = useState<Array<string | string[]>>([]);
   const [inputErrors, setInputErrors] = useState<boolean[]>([]);
+  const [result, setResult] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleInputChange = (index: number, value: string | string[]) => {
@@ -95,18 +98,18 @@ export const Function = ({
       for (let i = 0; i < inputValues.length; i++) {
         if (account) {
           const filtered = parameterFilter(func);
-          const temp = validateInput(
-            account,
-            filtered[i],
-            inputValues[i],
-          );
+          const temp = validateInput(account, filtered[i], inputValues[i]);
           errors[i] = !temp;
         }
       }
       setInputErrors(errors);
-      !!account &&
-        errors.every((value) => value === false) &&
-        (await onExcute(name, func, inputValues));
+      const result =
+        !!account && errors.every((value) => value === false)
+          ? await onExcute(name, func, inputValues)
+          : undefined;
+      if (result) {
+        setResult(JSON.stringify(result, null, 4));
+      }
     } finally {
       setIsLoading(false);
     }
@@ -117,6 +120,7 @@ export const Function = ({
     setParameters(filtered);
     setInputValues(new Array(filtered.length).fill(''));
     setInputErrors(new Array(filtered.length).fill(false));
+    setResult('');
     setIsOpen(false);
   }, [func]);
 
@@ -212,6 +216,20 @@ export const Function = ({
                 ))}
               </>
             )}
+            {(!isWrire || result) && (
+              <>
+                <label style={{ fontSize: '11px', color: 'GrayText' }}>
+                  Result
+                </label>
+                <VSCodeTextArea
+                  rows={5}
+                  style={{ width: '100%' }}
+                  placeholder="result"
+                  readOnly
+                  value={result}
+                />
+              </>
+            )}
             <div
               style={{
                 display: 'flex',
@@ -227,20 +245,6 @@ export const Function = ({
                   handleExcute(name, func, inputValues);
                 }}
               />
-            </div>
-            <div>
-              {returns.map((item, key) => (
-                <div key={key}>
-                  <label style={{ fontSize: '11px', color: 'GrayText' }}>
-                    {`return ${key}`}
-                  </label>
-                  <VSCodeTextField
-                    disabled
-                    style={{ width: '100%' }}
-                    placeholder={item}
-                  />
-                </div>
-              ))}
             </div>
           </div>
         </div>
