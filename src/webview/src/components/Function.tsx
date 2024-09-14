@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import {
-  VSCodeTextArea,
-  VSCodeTextField,
-} from '@vscode/webview-ui-toolkit/react';
+import { VSCodeTextField } from '@vscode/webview-ui-toolkit/react';
 import { MoveFunction } from '@aptos-labs/ts-sdk';
+import { getInterfaceType, validateInput } from '../utilities/helper';
+import { parameterFilter } from '../utilities/parameterFilter';
+import { VectorInputFields } from './VectorInputFields';
 import { ACCOUNT } from '../recoil';
 import { useRecoilState } from 'recoil';
 import { SpinButton } from './SpinButton';
@@ -72,6 +72,7 @@ export const Function = ({
 }) => {
   const [account] = useRecoilState(ACCOUNT);
   const [parameters, setParameters] = useState<string[]>([]);
+  const [returns, setReturns] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [inputValues, setInputValues] = useState<Array<string | string[]>>([]);
   const [inputErrors, setInputErrors] = useState<boolean[]>([]);
@@ -88,28 +89,34 @@ export const Function = ({
     func: MoveFunction,
     inputValues: Array<string | string[]>,
   ) => {
-    // TODO
+    try {
+      setIsLoading(true);
+      let errors: boolean[] = [...new Array(inputValues.length).fill(false)];
+      for (let i = 0; i < inputValues.length; i++) {
+        if (account) {
+          const filtered = parameterFilter(func);
+          const temp = await validateInput(
+            account,
+            filtered[i],
+            inputValues[i],
+          );
+          errors[i] = !temp;
+        }
+      }
+      setInputErrors(errors);
+      !!account &&
+        errors.every((value) => value === false) &&
+        (await onExcute(name, func, inputValues));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
-    const temp = func.params.filter((type) => {
-      if (typeof type === 'object') {
-        const struct =
-          (type as any).MutableReference?.Struct ||
-          (type as any).Reference?.Struct ||
-          (type as any).Struct;
-        return !(
-          struct &&
-          struct.address === '0x2' &&
-          struct.module === 'tx_context' &&
-          struct.name === 'TxContext'
-        );
-      }
-      return true;
-    });
-    setParameters(temp);
-    setInputValues(new Array(temp.length).fill(''));
-    setInputErrors(new Array(temp.length).fill(false));
+    const filtered = parameterFilter(func);
+    setParameters(filtered);
+    setInputValues(new Array(filtered.length).fill(''));
+    setInputErrors(new Array(filtered.length).fill(false));
     setIsOpen(false);
   }, [func]);
 
@@ -159,8 +166,48 @@ export const Function = ({
                 {parameters.map((item, key) => (
                   <div key={key}>
                     <label style={{ fontSize: '11px', color: 'GrayText' }}>
-                      {`Arg ${item}`}
+                      {`Arg ${key}`}
                     </label>
+                    {getInterfaceType(item) !== 'vector' && (
+                      <>
+                        <VSCodeTextField
+                          style={{ width: '100%' }}
+                          placeholder={item}
+                          value={inputValues[key] as string}
+                          onInput={(e) =>
+                            handleInputChange(
+                              key,
+                              (e.target as HTMLInputElement).value,
+                            )
+                          }
+                        />
+                        {inputErrors[key] && (
+                          <span
+                            style={{
+                              color: 'red',
+                              fontSize: '11px',
+                              wordWrap: 'break-word',
+                              whiteSpace: 'pre-wrap',
+                            }}
+                          >
+                            Invalid value for type {item}
+                          </span>
+                        )}
+                      </>
+                    )}
+                    {getInterfaceType(item) === 'vector' && (
+                      <VectorInputFields
+                        error={
+                          inputErrors[key]
+                            ? `Invalid value for type ${item}`
+                            : undefined
+                        }
+                        paramType={item}
+                        update={(params: string[]) => {
+                          handleInputChange(key, params);
+                        }}
+                      />
+                    )}
                   </div>
                 ))}
               </>
@@ -180,6 +227,20 @@ export const Function = ({
                   handleExcute(name, func, inputValues);
                 }}
               />
+            </div>
+            <div>
+              {returns.map((item, key) => (
+                <div key={key}>
+                  <label style={{ fontSize: '11px', color: 'GrayText' }}>
+                    {`return ${key}`}
+                  </label>
+                  <VSCodeTextField
+                    disabled
+                    style={{ width: '100%' }}
+                    placeholder={item}
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </div>

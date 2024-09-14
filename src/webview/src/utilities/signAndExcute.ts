@@ -51,6 +51,10 @@ export const signAndExcute = async (
       });
       return res;
     } catch (error) {
+      vscode.postMessage({
+        command: COMMENDS.MsgError,
+        data: `${error}`,
+      });
       throw new Error(`${error}`);
     }
   } else {

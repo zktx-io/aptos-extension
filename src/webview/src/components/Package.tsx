@@ -12,7 +12,8 @@ import { Function } from './Function';
 import { COMMENDS } from '../utilities/commends';
 import { useRecoilState } from 'recoil';
 import { ACCOUNT } from '../recoil';
-// import { moveCall } from '../utilities/moveCall';
+import { parameterFilter } from '../utilities/parameterFilter';
+import { moveCall } from '../utilities/moveCall';
 
 const cardStyles = {
   card: {
@@ -88,15 +89,13 @@ export const Package = ({
     if (account && account.zkAddress && module) {
       try {
         setIsExcute(true);
-        /*
         await moveCall(
           client,
           account,
           `${packageId}::${module}::${name}`,
-          func,
+          parameterFilter(func),
           inputValues,
         );
-        */
       } catch (e) {
         console.error(e);
       } finally {
