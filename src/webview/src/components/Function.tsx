@@ -95,7 +95,7 @@ export const Function = ({
       for (let i = 0; i < inputValues.length; i++) {
         if (account) {
           const filtered = parameterFilter(func);
-          const temp = await validateInput(
+          const temp = validateInput(
             account,
             filtered[i],
             inputValues[i],
