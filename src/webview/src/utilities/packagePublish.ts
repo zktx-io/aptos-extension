@@ -22,11 +22,7 @@ export const packagePublish = async (
         moduleBytecode,
       });
       const res = await signAndExcute(account, client, transaction);
-
-      if (res.success) {
-        return { hash: res.hash, packageId: account.zkAddress.address };
-      }
-      throw new Error('publishPackageTransaction fail');
+      return { hash: res.hash, packageId: account.zkAddress.address };
     } catch (error) {
       throw new Error(`${error}`);
     }
