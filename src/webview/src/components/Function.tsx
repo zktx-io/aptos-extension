@@ -219,12 +219,12 @@ export const Function = ({
             {(!isWrire || result) && (
               <>
                 <label style={{ fontSize: '11px', color: 'GrayText' }}>
-                  Result
+                  {isWrire ? 'Retuen' : 'Result'}
                 </label>
                 <VSCodeTextArea
                   rows={5}
                   style={{ width: '100%' }}
-                  placeholder="result"
+                  placeholder={isWrire ? 'retuen' : 'result'}
                   readOnly
                   value={result}
                 />
