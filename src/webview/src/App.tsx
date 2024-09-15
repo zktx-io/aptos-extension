@@ -34,7 +34,8 @@ function App() {
               state,
             } = message.data;
             setHasTerminal(terminal);
-            loaddedAccount && setAccount(loaddedAccount);
+            loaddedAccount &&
+              setAccount((oldState) => ({ ...oldState, ...loaddedAccount }));
             state &&
               state.path &&
               vscode.postMessage({
