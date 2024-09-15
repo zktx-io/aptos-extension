@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useRecoilState } from 'recoil';
 
 import './App.css';
 
@@ -11,7 +12,6 @@ import {
 } from './components/ExplorerPackage';
 import { Workspace } from './components/Workspace';
 import { COMMENDS } from './utilities/commends';
-import { useRecoilState } from 'recoil';
 import { ACCOUNT } from './recoil';
 
 function App() {
