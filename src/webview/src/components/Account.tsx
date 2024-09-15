@@ -43,7 +43,8 @@ export const Account = forwardRef<AccountHandles>((props, ref) => {
       randomness,
       ephemeralKeyPair: { publicKey, privateKey },
     } = await createNonce(network);
-    setAccount({
+    setAccount((oldState) => ({
+      ...oldState,
       nonce: {
         expiration,
         randomness,
@@ -51,7 +52,7 @@ export const Account = forwardRef<AccountHandles>((props, ref) => {
         publicKey,
         privateKey,
       },
-    });
+    }));
     await googleLogin(nonce);
   };
 
