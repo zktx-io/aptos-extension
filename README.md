@@ -9,6 +9,7 @@ The Aptos extension provides seamless support for compiling, deploying, and test
 - **GitHub Codespaces Integration**: Increase the efficiency of your development workflow with full support for GitHub Codespaces.
 - **Unified Development**: Manage both front-end and back-end code in a single repository for streamlined development.
 - **Upgrade Smart Contracts**: Seamlessly upgrade and test your smart contracts.
+- **Move 2**: Support [Move 2](https://aptos.dev/en/build/smart-contracts/book/move-2.0)
 
 ## Interface Overview
 

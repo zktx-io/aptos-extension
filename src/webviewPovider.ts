@@ -162,7 +162,7 @@ export class WebviewViewProvider implements vscode.WebviewViewProvider {
                 'This environment does not support terminal operations.',
               );
             } else {
-              this.runTerminal(runCompile(data));
+              this.runTerminal(runCompile(data.path, data.version));
             }
             break;
           case COMMENDS.UintTest:

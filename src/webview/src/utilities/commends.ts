@@ -16,6 +16,11 @@ export enum COMMENDS {
   OutputError = 'output:error',
 }
 
+export enum APTOS {
+  MOVE_1 = 'Aptos_Move_Version_1',
+  MOVE_2 = 'Aptos_Move_Version_2',
+}
+
 export const UrlCallback = 'https://callback-b2sh2eqjia-uc.a.run.app';
 
 export const UrlAuthCode = 'https://getauthcode-b2sh2eqjia-uc.a.run.app';
