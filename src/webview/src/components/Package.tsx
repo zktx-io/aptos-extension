@@ -12,14 +12,13 @@ import {
   MoveValue,
 } from '@aptos-labs/ts-sdk';
 import { VSCodeTextField } from '@vscode/webview-ui-toolkit/react';
-import { vscode } from '../utilities/vscode';
 import { Function } from './Function';
-import { COMMENDS } from '../utilities/commends';
 import { useRecoilState } from 'recoil';
-import { ACCOUNT } from '../recoil';
+import { STATE } from '../recoil';
 import { parameterFilter } from '../utilities/parameterFilter';
 import { moveCall } from '../utilities/moveCall';
 import { moveView } from '../utilities/moveView';
+import { packageDelete } from '../utilities/stateController';
 
 const cardStyles = {
   card: {
@@ -61,10 +60,6 @@ type IFunctions = {
   [name: string]: MoveFunction;
 };
 
-export type IModule = {
-  [name: string]: MoveModuleBytecode;
-};
-
 export const Package = ({
   client,
   packageId,
@@ -72,9 +67,9 @@ export const Package = ({
 }: {
   client: Aptos;
   packageId: string;
-  data: IModule;
+  data: { [name: string]: MoveModuleBytecode };
 }) => {
-  const [account] = useRecoilState(ACCOUNT);
+  const [state, setState] = useRecoilState(STATE);
   const [modules, setModules] = useState<string[]>([]);
   const [module, setModule] = useState<string | undefined>(undefined);
   const [isExcute, setIsExcute] = useState<boolean>(false);
@@ -82,10 +77,7 @@ export const Package = ({
   const [funcRead, setFuncRead] = useState<IFunctions | undefined>(undefined);
 
   const onDelete = () => {
-    vscode.postMessage({
-      command: COMMENDS.PackageDelete,
-      data: packageId,
-    });
+    setState((oldState) => ({ ...oldState, ...packageDelete(packageId) }));
   };
 
   const onExcute = async (
@@ -93,7 +85,7 @@ export const Package = ({
     func: MoveFunction,
     inputValues: Array<string | string[]>,
   ): Promise<MoveValue[] | undefined> => {
-    if (account && account.zkAddress && module) {
+    if (state.account && state.account.zkAddress && module) {
       try {
         setIsExcute(true);
         if (func.is_view) {
@@ -107,7 +99,7 @@ export const Package = ({
         }
         await moveCall(
           client,
-          account,
+          state.account,
           `${packageId}::${module}::${name}`,
           parameterFilter(func),
           inputValues,

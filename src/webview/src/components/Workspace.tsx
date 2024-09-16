@@ -11,8 +11,9 @@ import {
 import { vscode } from '../utilities/vscode';
 import { APTOS, COMMENDS } from '../utilities/commends';
 import { SpinButton } from './SpinButton';
-import { ACCOUNT } from '../recoil';
+import { STATE } from '../recoil';
 import { packagePublish } from '../utilities/packagePublish';
+import { dataGet, dataSet, packageSelect } from '../utilities/stateController';
 
 export const Workspace = ({
   hasTerminal,
@@ -21,16 +22,11 @@ export const Workspace = ({
   hasTerminal: boolean;
   update: (packageId: string) => void;
 }) => {
-  const [account] = useRecoilState(ACCOUNT);
+  const [state, setState] = useRecoilState(STATE);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [selectedPath, setSelectedPath] = useState<string | undefined>(
-    undefined,
-  );
   const [fileList, setFileList] = useState<
     { path: string; name: string; version: string }[]
   >([]);
-
-  const [state, setState] = useState<{ [x: string]: any }>({});
 
   useEffect(() => {
     const handleMessage = async (event: any) => {
@@ -50,29 +46,27 @@ export const Workspace = ({
             });
             setFileList(temp);
             if (temp.length > 0) {
+              const data = dataGet();
               const tempPath =
-                selectedPath && temp.find(({ path }) => path === selectedPath)
-                  ? selectedPath
+                data.path && temp.find(({ path }) => path === data.path)
+                  ? data.path
                   : temp[0].path;
-              vscode.postMessage({
-                command: COMMENDS.PackageSelect,
-                data: tempPath,
-              });
+              setState((oldState) => ({
+                ...oldState,
+                ...packageSelect(tempPath),
+              }));
             } else {
-              setSelectedPath(undefined);
+              setState((oldState) => ({ ...oldState, ...packageSelect() }));
             }
-          }
-          break;
-        case COMMENDS.PackageSelect:
-          {
-            const { path } = message.data;
-            setSelectedPath(path);
           }
           break;
         case COMMENDS.Deploy:
           try {
-            if (!!account?.zkAddress) {
-              const { packageId } = await packagePublish(account, message.data);
+            if (!!state.account?.zkAddress) {
+              const { packageId } = await packagePublish(
+                state.account,
+                message.data,
+              );
               update(packageId);
             }
           } catch (e) {
@@ -87,12 +81,11 @@ export const Workspace = ({
     };
 
     window.addEventListener('message', handleMessage);
-    setState(vscode.getState() as { [x: string]: any } | {});
 
     return () => {
       window.removeEventListener('message', handleMessage);
     };
-  }, [account, selectedPath, update]);
+  }, [setState, state, update]);
 
   return (
     <>
@@ -111,15 +104,12 @@ export const Workspace = ({
       <label style={{ fontSize: '11px', color: 'GrayText' }}>PACKAGE</label>
       <VSCodeDropdown
         style={{ width: '100%', marginBottom: '8px' }}
-        value={selectedPath}
+        value={state.path}
         onChange={(e) => {
           if (e.target) {
             const path = (e.target as HTMLInputElement).value;
             path &&
-              vscode.postMessage({
-                command: COMMENDS.PackageSelect,
-                data: path,
-              });
+              setState((oldState) => ({ ...oldState, ...packageSelect(path) }));
           }
         }}
       >
@@ -141,11 +131,16 @@ export const Workspace = ({
       >
         <VSCodeCheckbox
           style={{ display: 'flex', flexDirection: 'row-reverse' }}
-          checked={state.move2}
+          checked={!!(state as any).move2}
           onChange={(e) => {
-            const temp: { [x: string]: any } = vscode.getState() as any;
-            vscode.setState({ ...temp, move2: (e.target as any).checked });
-            setState(vscode.getState() as any);
+            dataSet({
+              ...dataGet(),
+              move2: (e.target as any).checked,
+            });
+            setState((oldState) => ({
+              ...oldState,
+              move2: (e.target as any).checked,
+            }));
           }}
         >
           Move 2.0
@@ -154,14 +149,13 @@ export const Workspace = ({
 
       <VSCodeButton
         style={{ width: '100%', marginBottom: '8px' }}
-        disabled={!hasTerminal || !selectedPath}
+        disabled={!hasTerminal || !state.path}
         onClick={() => {
-          const { move2 } = vscode.getState() as any;
           vscode.postMessage({
             command: COMMENDS.Compile,
             data: {
-              path: selectedPath,
-              version: !move2 ? APTOS.MOVE_1 : APTOS.MOVE_2,
+              path: state.path,
+              version: !!(state as any).move2 ? APTOS.MOVE_2 : APTOS.MOVE_1,
             },
           });
         }}
@@ -175,11 +169,11 @@ export const Workspace = ({
           marginBottom: '8px',
           backgroundColor: '#ff9800',
         }}
-        disabled={!hasTerminal || !selectedPath}
+        disabled={!hasTerminal || !state.path}
         onClick={() => {
           vscode.postMessage({
             command: COMMENDS.UintTest,
-            data: selectedPath,
+            data: state.path,
           });
         }}
       >
@@ -191,13 +185,13 @@ export const Workspace = ({
         spin={isLoading}
         disabled={
           !hasTerminal ||
-          !selectedPath ||
-          !account?.zkAddress?.address ||
+          !state.path ||
+          !state.account?.zkAddress?.address ||
           isLoading
         }
         width="100%"
         onClick={() => {
-          const selected = fileList.find((item) => item.path === selectedPath);
+          const selected = fileList.find((item) => item.path === state.path);
           if (selected) {
             setIsLoading(true);
             vscode.postMessage({

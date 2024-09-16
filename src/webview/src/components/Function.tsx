@@ -7,7 +7,7 @@ import { MoveFunction, MoveValue } from '@aptos-labs/ts-sdk';
 import { getInterfaceType, validateInput } from '../utilities/helper';
 import { parameterFilter } from '../utilities/parameterFilter';
 import { VectorInputFields } from './VectorInputFields';
-import { ACCOUNT } from '../recoil';
+import { STATE } from '../recoil';
 import { useRecoilState } from 'recoil';
 import { SpinButton } from './SpinButton';
 
@@ -73,7 +73,7 @@ export const Function = ({
     inputValues: Array<string | string[]>,
   ) => Promise<MoveValue[] | undefined>;
 }) => {
-  const [account] = useRecoilState(ACCOUNT);
+  const [state] = useRecoilState(STATE);
   const [parameters, setParameters] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [inputValues, setInputValues] = useState<Array<string | string[]>>([]);
@@ -96,15 +96,19 @@ export const Function = ({
       setIsLoading(true);
       let errors: boolean[] = [...new Array(inputValues.length).fill(false)];
       for (let i = 0; i < inputValues.length; i++) {
-        if (account) {
+        if (state.account) {
           const filtered = parameterFilter(func);
-          const temp = validateInput(account, filtered[i], inputValues[i]);
+          const temp = validateInput(
+            state.account,
+            filtered[i],
+            inputValues[i],
+          );
           errors[i] = !temp;
         }
       }
       setInputErrors(errors);
       const result =
-        !!account && errors.every((value) => value === false)
+        !!state.account && errors.every((value) => value === false)
           ? await onExcute(name, func, inputValues)
           : undefined;
       if (result) {

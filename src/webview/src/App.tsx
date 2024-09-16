@@ -12,7 +12,7 @@ import {
 } from './components/ExplorerPackage';
 import { Workspace } from './components/Workspace';
 import { COMMENDS } from './utilities/commends';
-import { ACCOUNT } from './recoil';
+import { STATE } from './recoil';
 
 function App() {
   const initialized = useRef<boolean>(false);
@@ -20,7 +20,7 @@ function App() {
   const refPackageManager = useRef<ExplorerPackageHandles>(null);
 
   const [hasTerminal, setHasTerminal] = useState<boolean>(false);
-  const [, setAccount] = useRecoilState(ACCOUNT);
+  const [, setState] = useRecoilState(STATE);
 
   useEffect(() => {
     const handleMessage = async (event: any) => {
@@ -28,20 +28,14 @@ function App() {
       switch (message.command) {
         case COMMENDS.Env:
           {
-            const {
-              hasTerminal: terminal,
-              account: loaddedAccount,
-              state,
-            } = message.data;
+            const { hasTerminal: terminal, account: loaddedAccount } =
+              message.data;
             setHasTerminal(terminal);
             loaddedAccount &&
-              setAccount((oldState) => ({ ...oldState, ...loaddedAccount }));
-            state &&
-              state.path &&
-              vscode.postMessage({
-                command: COMMENDS.PackageSelect,
-                data: state.path,
-              });
+              setState((oldState) => ({
+                ...oldState,
+                account: { ...oldState.account, ...loaddedAccount },
+              }));
           }
           break;
         default:
@@ -58,7 +52,7 @@ function App() {
     return () => {
       window.removeEventListener('message', handleMessage);
     };
-  }, [setAccount]);
+  }, [setState]);
 
   return (
     <>
