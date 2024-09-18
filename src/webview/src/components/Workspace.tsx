@@ -14,6 +14,7 @@ import { SpinButton } from './SpinButton';
 import { STATE } from '../recoil';
 import { packagePublish } from '../utilities/packagePublish';
 import { dataGet, dataSet, packageSelect } from '../utilities/stateController';
+import { getBalance } from '../utilities/getBalance';
 
 export const Workspace = ({
   hasTerminal,
@@ -67,6 +68,8 @@ export const Workspace = ({
                 state.account,
                 message.data,
               );
+              const balance = await getBalance(state.account);
+              setState((oldState) => ({ ...oldState, balance }));
               update(packageId);
             }
           } catch (e) {
@@ -105,6 +108,7 @@ export const Workspace = ({
       <VSCodeDropdown
         style={{ width: '100%', marginBottom: '8px' }}
         value={state.path}
+        disabled={!state.account || !state.account.zkAddress}
         onChange={(e) => {
           if (e.target) {
             const path = (e.target as HTMLInputElement).value;
@@ -149,7 +153,12 @@ export const Workspace = ({
 
       <VSCodeButton
         style={{ width: '100%', marginBottom: '8px' }}
-        disabled={!hasTerminal || !state.path}
+        disabled={
+          !hasTerminal ||
+          !state.account ||
+          !state.account.zkAddress ||
+          !state.path
+        }
         onClick={() => {
           vscode.postMessage({
             command: COMMENDS.Compile,
@@ -169,7 +178,12 @@ export const Workspace = ({
           marginBottom: '8px',
           backgroundColor: '#ff9800',
         }}
-        disabled={!hasTerminal || !state.path}
+        disabled={
+          !hasTerminal ||
+          !state.account ||
+          !state.account.zkAddress ||
+          !state.path
+        }
         onClick={() => {
           vscode.postMessage({
             command: COMMENDS.UintTest,

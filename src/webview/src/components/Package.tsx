@@ -4,16 +4,16 @@ import {
   VSCodeDivider,
   VSCodeDropdown,
   VSCodeOption,
+  VSCodeTextField,
 } from '@vscode/webview-ui-toolkit/react';
+import { useRecoilState } from 'recoil';
 import {
   Aptos,
   MoveFunction,
   MoveModuleBytecode,
   MoveValue,
 } from '@aptos-labs/ts-sdk';
-import { VSCodeTextField } from '@vscode/webview-ui-toolkit/react';
 import { Function } from './Function';
-import { useRecoilState } from 'recoil';
 import { STATE } from '../recoil';
 import { parameterFilter } from '../utilities/parameterFilter';
 import { moveCall } from '../utilities/moveCall';
@@ -114,23 +114,25 @@ export const Package = ({
   };
 
   const selectModule = (select: string) => {
-    setModule(select);
-    const tempData: { [x: string]: MoveFunction } = {};
-    data[select].abi!.exposed_functions.forEach(
-      (item) => (tempData[item.name] = item),
-    );
-    const entryFunctions = Object.fromEntries(
-      Object.entries(tempData).filter(([, value]) => value.is_entry),
-    );
-    setFuncWrite(
-      Object.keys(entryFunctions).length > 0 ? entryFunctions : undefined,
-    );
-    const viewFunctions = Object.fromEntries(
-      Object.entries(tempData).filter(([, value]) => value.is_view),
-    );
-    setFuncRead(
-      Object.keys(viewFunctions).length > 0 ? viewFunctions : undefined,
-    );
+    if (data[select].abi) {
+      setModule(select);
+      const tempData: { [x: string]: MoveFunction } = {};
+      data[select].abi.exposed_functions.forEach(
+        (item) => (tempData[item.name] = item),
+      );
+      const entryFunctions = Object.fromEntries(
+        Object.entries(tempData).filter(([, value]) => value.is_entry),
+      );
+      setFuncWrite(
+        Object.keys(entryFunctions).length > 0 ? entryFunctions : undefined,
+      );
+      const viewFunctions = Object.fromEntries(
+        Object.entries(tempData).filter(([, value]) => value.is_view),
+      );
+      setFuncRead(
+        Object.keys(viewFunctions).length > 0 ? viewFunctions : undefined,
+      );
+    }
   };
 
   useEffect(() => {

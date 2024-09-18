@@ -4,8 +4,10 @@ import { IAccount } from '../recoil';
 
 const APT_DECIMALS = 8;
 
-export const getBalance = async (account: IAccount): Promise<string> => {
-  if (account.nonce.privateKey && account.zkAddress) {
+export const getBalance = async (
+  account: IAccount | undefined,
+): Promise<string | undefined> => {
+  if (account && account.zkAddress && account.nonce.privateKey) {
     try {
       const client = new Aptos(
         new AptosConfig({ network: account.nonce.network as any }),
@@ -17,9 +19,9 @@ export const getBalance = async (account: IAccount): Promise<string> => {
       const bn = new BigNumber(balance).shiftedBy(-1 * APT_DECIMALS);
       return `${bn.toFormat()} APT`;
     } catch (error) {
-      throw new Error(`${error}`);
+      return undefined;
     }
   } else {
-    return 'n/a';
+    return undefined;
   }
 };
