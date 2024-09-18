@@ -1,25 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
+import { Aptos, AptosConfig } from '@aptos-labs/ts-sdk';
 
 import './App.css';
 
 import { vscode } from './utilities/vscode';
 import { Account } from './components/Account';
 
-import {
-  ExplorerPackage,
-  ExplorerPackageHandles,
-} from './components/ExplorerPackage';
+import { ExplorerPackage } from './components/ExplorerPackage';
 import { Workspace } from './components/Workspace';
 import { COMMENDS } from './utilities/commends';
 import { STATE } from './recoil';
 
 function App() {
   const initialized = useRef<boolean>(false);
-  const refPackageManager = useRef<ExplorerPackageHandles>(null);
-
   const [hasTerminal, setHasTerminal] = useState<boolean>(false);
-  const [, setState] = useRecoilState(STATE);
+  const [client, setClinet] = useState<Aptos | undefined>(undefined);
+  const [state, setState] = useRecoilState(STATE);
 
   useEffect(() => {
     const handleMessage = async (event: any) => {
@@ -53,16 +50,21 @@ function App() {
     };
   }, [setState]);
 
+  useEffect(() => {
+    if (state.account && !client) {
+      setClinet(
+        new Aptos(
+          new AptosConfig({ network: state.account.nonce.network as any }),
+        ),
+      );
+    }
+  }, [client, state]);
+
   return (
     <>
       <Account />
-      <Workspace
-        hasTerminal={hasTerminal}
-        update={(packageId: string) => {
-          refPackageManager.current?.addPackage(packageId);
-        }}
-      />
-      <ExplorerPackage ref={refPackageManager} />
+      <Workspace client={client} hasTerminal={hasTerminal} />
+      <ExplorerPackage client={client} />
     </>
   );
 }

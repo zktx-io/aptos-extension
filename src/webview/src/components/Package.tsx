@@ -114,10 +114,10 @@ export const Package = ({
   };
 
   const selectModule = (select: string) => {
-    if (data[select].abi) {
+    if (!!data[select].abi) {
       setModule(select);
       const tempData: { [x: string]: MoveFunction } = {};
-      data[select].abi.exposed_functions.forEach(
+      data[select].abi!.exposed_functions.forEach(
         (item) => (tempData[item.name] = item),
       );
       const entryFunctions = Object.fromEntries(

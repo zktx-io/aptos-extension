@@ -8,20 +8,27 @@ import {
   VSCodeDropdown,
   VSCodeOption,
 } from '@vscode/webview-ui-toolkit/react';
+import { Aptos } from '@aptos-labs/ts-sdk';
 import { vscode } from '../utilities/vscode';
 import { APTOS, COMMENDS } from '../utilities/commends';
 import { SpinButton } from './SpinButton';
 import { STATE } from '../recoil';
 import { packagePublish } from '../utilities/packagePublish';
-import { dataGet, dataSet, packageSelect } from '../utilities/stateController';
+import {
+  dataGet,
+  dataSet,
+  packageAdd,
+  packageSelect,
+} from '../utilities/stateController';
 import { getBalance } from '../utilities/getBalance';
+import { loadPackageData } from '../utilities/loadPackageData';
 
 export const Workspace = ({
   hasTerminal,
-  update,
+  client,
 }: {
   hasTerminal: boolean;
-  update: (packageId: string) => void;
+  client: Aptos | undefined;
 }) => {
   const [state, setState] = useRecoilState(STATE);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -69,8 +76,16 @@ export const Workspace = ({
                 message.data,
               );
               const balance = await getBalance(state.account);
-              setState((oldState) => ({ ...oldState, balance }));
-              update(packageId);
+              const modules = await loadPackageData(client, packageId);
+              setState((oldState) =>
+                modules
+                  ? {
+                      ...oldState,
+                      balance,
+                      ...packageAdd(packageId, modules),
+                    }
+                  : { ...oldState, balance },
+              );
             }
           } catch (e) {
             console.error(e);
@@ -88,7 +103,8 @@ export const Workspace = ({
     return () => {
       window.removeEventListener('message', handleMessage);
     };
-  }, [setState, state, update]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.account]);
 
   return (
     <>
