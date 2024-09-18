@@ -5,6 +5,8 @@ import {
   MoveValue,
   SimpleEntryFunctionArgumentTypes,
 } from '@aptos-labs/ts-sdk';
+import { vscode } from './vscode';
+import { COMMENDS } from './commends';
 
 export const moveView = async (
   client: Aptos,
@@ -19,8 +21,12 @@ export const moveView = async (
       function: target as any,
       functionArguments,
     };
-    const result = await client.view({ payload });
-    return result;
+    const res = await client.view({ payload });
+    vscode.postMessage({
+      command: COMMENDS.OutputInfo,
+      data: JSON.stringify(res, null, 4),
+    });
+    return res;
   } catch (error) {
     throw new Error(`${error}`);
   }
