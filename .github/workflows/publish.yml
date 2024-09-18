@@ -10,6 +10,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+
     steps:
       - uses: actions/checkout@v4
 
@@ -52,6 +53,10 @@ jobs:
             echo "SHOULD_UPDATE=false" >> $GITHUB_ENV
           fi
 
+      # Get the current branch
+      - name: Get the current branch
+        run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
       # Update package.json version only if the release version is greater
       - name: Update package version
         if: env.SHOULD_UPDATE == 'true'
@@ -65,7 +70,7 @@ jobs:
           git config --local user.email "actions@github.com"
           git add package.json
           git commit -m "Bump version to ${{ env.RELEASE_VERSION }}"
-          git push
+          git push origin HEAD:${{ env.BRANCH_NAME }}
 
       # Install vsce globally
       - run: npm i -g vsce
