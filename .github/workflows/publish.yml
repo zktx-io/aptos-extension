@@ -53,10 +53,6 @@ jobs:
             echo "SHOULD_UPDATE=false" >> $GITHUB_ENV
           fi
 
-      # Get the current branch
-      - name: Get the current branch
-        run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-
       # Update package.json version only if the release version is greater
       - name: Update package version
         if: env.SHOULD_UPDATE == 'true'
@@ -70,13 +66,14 @@ jobs:
           git config --local user.email "actions@github.com"
           git add package.json
           git commit -m "Bump version to ${{ env.RELEASE_VERSION }}"
-          git push origin HEAD:${{ env.BRANCH_NAME }}
+          git push origin HEAD:main
 
       # Install vsce globally
       - run: npm i -g vsce
 
-      # Package and Publish the extension
+      # Build the extension
       - run: npm run build:webview
-      - run: vsce package
+
+      # Publish the extension
       - name: Publish
-        run: vsce publish -p ${{ secrets.VSCE_PAT }}
+        run: vsce publish -p ${{ secrets.VSCE_PAT }} --allow-missing-repository
