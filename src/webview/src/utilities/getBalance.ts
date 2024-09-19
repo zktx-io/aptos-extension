@@ -1,17 +1,15 @@
-import { Aptos, AptosConfig, APTOS_COIN } from '@aptos-labs/ts-sdk';
+import { Aptos, APTOS_COIN } from '@aptos-labs/ts-sdk';
 import BigNumber from 'bignumber.js';
 import { IAccount } from '../recoil';
 
 const APT_DECIMALS = 8;
 
 export const getBalance = async (
+  client: Aptos | undefined,
   account: IAccount | undefined,
 ): Promise<string | undefined> => {
-  if (account && account.zkAddress && account.nonce.privateKey) {
+  if (!!client && account && account.zkAddress && account.nonce.privateKey) {
     try {
-      const client = new Aptos(
-        new AptosConfig({ network: account.nonce.network as any }),
-      );
       const balance = await client.getAccountCoinAmount({
         accountAddress: account.zkAddress.address,
         coinType: APTOS_COIN,

@@ -75,7 +75,7 @@ export const Workspace = ({
                 state.account,
                 message.data,
               );
-              const balance = await getBalance(state.account);
+              const balance = await getBalance(client, state.account);
               const modules = await loadPackageData(client, packageId);
               setState((oldState) =>
                 modules
@@ -104,7 +104,7 @@ export const Workspace = ({
       window.removeEventListener('message', handleMessage);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.account]);
+  }, [client, state.account]);
 
   return (
     <>
@@ -214,6 +214,7 @@ export const Workspace = ({
         title="Deploy"
         spin={isLoading}
         disabled={
+          !client ||
           !hasTerminal ||
           !state.path ||
           !state.account?.zkAddress?.address ||
