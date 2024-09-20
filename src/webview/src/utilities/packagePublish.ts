@@ -1,16 +1,14 @@
-import { Aptos, AptosConfig, HexInput } from '@aptos-labs/ts-sdk';
+import { Aptos, HexInput } from '@aptos-labs/ts-sdk';
 import { IAccount } from '../recoil';
 import { signAndExcute } from './signAndExcute';
 
 export const packagePublish = async (
   account: IAccount,
+  client: Aptos,
   dumpByte: string,
 ): Promise<{ hash: string; packageId: string }> => {
   if (account.nonce.privateKey && account.zkAddress) {
     try {
-      const client = new Aptos(
-        new AptosConfig({ network: account.nonce.network as any }),
-      );
       const {
         args: [{ value: metadataBytes }, { value: moduleBytecode }],
       } = JSON.parse(dumpByte) as {

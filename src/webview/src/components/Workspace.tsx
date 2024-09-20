@@ -70,9 +70,10 @@ export const Workspace = ({
           break;
         case COMMENDS.Deploy:
           try {
-            if (!!state.account?.zkAddress) {
+            if (!!state.account?.zkAddress && !!client) {
               const { packageId } = await packagePublish(
                 state.account,
+                client,
                 message.data,
               );
               const balance = await getBalance(client, state.account);

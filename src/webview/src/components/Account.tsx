@@ -88,9 +88,10 @@ export const Account = ({ client }: { client: Aptos | undefined }) => {
       const message = event.data;
       switch (message.command) {
         case COMMENDS.LoginJwt:
-          if (state.account && message.data) {
+          if (state.account && message.data && !!client) {
             try {
               const { address, proof, salt } = await createProof(
+                client,
                 state.account.nonce,
                 message.data,
               );

@@ -1,13 +1,9 @@
-import {
-  Aptos,
-  AptosConfig,
-  Ed25519PrivateKey,
-  EphemeralKeyPair,
-} from '@aptos-labs/ts-sdk';
+import { Aptos, Ed25519PrivateKey, EphemeralKeyPair } from '@aptos-labs/ts-sdk';
 import { INonce } from '../recoil';
 
 export const createProof = async (
-  { network, expiration, randomness, privateKey }: INonce,
+  client: Aptos,
+  { expiration, randomness, privateKey }: INonce,
   jwt: string,
 ): Promise<{ address: string; proof: string; salt: string }> => {
   if (privateKey) {
@@ -16,8 +12,7 @@ export const createProof = async (
       blinder: randomness,
       expiryDateSecs: expiration,
     });
-    const aptos = new Aptos(new AptosConfig({ network: network as any }));
-    const keylessAccount = await aptos.deriveKeylessAccount({
+    const keylessAccount = await client.deriveKeylessAccount({
       jwt,
       ephemeralKeyPair,
     });
