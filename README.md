@@ -10,6 +10,7 @@ The Aptos extension provides seamless support for compiling, deploying, and test
 - **Unified Development**: Manage both front-end and back-end code in a single repository for streamlined development.
 - **Upgrade Smart Contracts**: Seamlessly upgrade and test your smart contracts.
 - **Support Move 2.0**: [Move 2.0 Release Notes](https://aptos.dev/en/build/smart-contracts/book/move-2.0)
+- **Support Move FMT**: [Introducing movefmt](https://medium.com/aptoslabs/introducing-movefmt-code-formatter-for-move-on-aptos-3aebb1bdbb85)
 
 ## Interface Overview
 
