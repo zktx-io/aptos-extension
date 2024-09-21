@@ -4,8 +4,7 @@ export enum COMMENDS {
   LoginJwt = 'google:jwt',
   StoreAccount = 'storeAccount',
   PackageList = 'package:list',
-  Compile = 'package:compile',
-  UintTest = 'package:unitTest',
+  CLI = 'package:cli',
   Deploy = 'package:deploy',
   MsgInfo = 'message:info',
   MsgError = 'message:error',
@@ -21,8 +20,3 @@ export const ClientId =
   '39820794793-qgodeckj0dobe2qd7o23s8etn8j5lf05.apps.googleusercontent.com';
 
 export const ClientSecret = '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';
-
-export enum APTOS {
-  MOVE_1 = 'Aptos_Move_Version_1',
-  MOVE_2 = 'Aptos_Move_Version_2',
-}

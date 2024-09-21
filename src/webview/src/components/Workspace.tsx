@@ -10,7 +10,7 @@ import {
 } from '@vscode/webview-ui-toolkit/react';
 import { Aptos } from '@aptos-labs/ts-sdk';
 import { vscode } from '../utilities/vscode';
-import { APTOS, COMMENDS } from '../utilities/commends';
+import { COMMENDS } from '../utilities/commends';
 import { SpinButton } from './SpinButton';
 import { STATE } from '../recoil';
 import { packagePublish } from '../utilities/packagePublish';
@@ -22,6 +22,7 @@ import {
 } from '../utilities/stateController';
 import { getBalance } from '../utilities/getBalance';
 import { loadPackageData } from '../utilities/loadPackageData';
+import { runBuild, runFormatter, runProve, runTest } from '../utilities/cli';
 
 export const Workspace = ({
   hasTerminal,
@@ -168,48 +169,104 @@ export const Workspace = ({
         </VSCodeCheckbox>
       </div>
 
-      <VSCodeButton
-        style={{ width: '100%', marginBottom: '8px' }}
-        disabled={
-          !hasTerminal ||
-          !state.account ||
-          !state.account.zkAddress ||
-          !state.path
-        }
-        onClick={() => {
-          vscode.postMessage({
-            command: COMMENDS.Compile,
-            data: {
-              path: state.path,
-              version: !!(state as any).move2 ? APTOS.MOVE_2 : APTOS.MOVE_1,
-            },
-          });
-        }}
-      >
-        Compile
-      </VSCodeButton>
-
-      <VSCodeButton
+      <div
         style={{
-          width: '100%',
-          marginBottom: '8px',
-          backgroundColor: '#ff9800',
-        }}
-        disabled={
-          !hasTerminal ||
-          !state.account ||
-          !state.account.zkAddress ||
-          !state.path
-        }
-        onClick={() => {
-          vscode.postMessage({
-            command: COMMENDS.UintTest,
-            data: state.path,
-          });
+          display: 'flex',
+          justifyContent: 'space-between',
+          marginBottom: '4px',
         }}
       >
-        Unit Test
-      </VSCodeButton>
+        <VSCodeButton
+          style={{ flex: 1, marginRight: '2px' }}
+          disabled={
+            !hasTerminal ||
+            !state.account ||
+            !state.account.zkAddress ||
+            !state.path
+          }
+          onClick={() => {
+            state.path &&
+              vscode.postMessage({
+                command: COMMENDS.CLI,
+                data: runBuild(state.path, !!(state as any).move2),
+              });
+          }}
+        >
+          Build
+        </VSCodeButton>
+        <VSCodeButton
+          style={{
+            flex: 1,
+            marginLeft: '2px',
+          }}
+          disabled={
+            !hasTerminal ||
+            !state.account ||
+            !state.account.zkAddress ||
+            !state.path
+          }
+          onClick={() => {
+            state.path &&
+              vscode.postMessage({
+                command: COMMENDS.CLI,
+                data: runProve(state.path, !!(state as any).move2),
+              });
+          }}
+        >
+          Prove
+        </VSCodeButton>
+      </div>
+
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          marginBottom: '4px',
+        }}
+      >
+        <VSCodeButton
+          style={{
+            flex: 1,
+            marginRight: '2px',
+          }}
+          disabled={
+            !hasTerminal ||
+            !state.account ||
+            !state.account.zkAddress ||
+            !state.path
+          }
+          onClick={() => {
+            state.path &&
+              vscode.postMessage({
+                command: COMMENDS.CLI,
+                data: runTest(state.path, !!(state as any).move2),
+              });
+          }}
+        >
+          Test
+        </VSCodeButton>
+        <VSCodeButton
+          style={{
+            flex: 1,
+            marginLeft: '2px',
+          }}
+          disabled={
+            !hasTerminal ||
+            !state.account ||
+            !state.account.zkAddress ||
+            !state.path
+          }
+          onClick={() => {
+            state.path &&
+              vscode.postMessage({
+                command: COMMENDS.CLI,
+                data: runFormatter(state.path),
+              });
+          }}
+        >
+          FMT
+        </VSCodeButton>
+      </div>
 
       <SpinButton
         title="Deploy"
@@ -222,6 +279,7 @@ export const Workspace = ({
           isLoading
         }
         width="100%"
+        bgColor="#ff9800"
         onClick={() => {
           const selected = fileList.find((item) => item.path === state.path);
           if (selected) {
