@@ -60,7 +60,7 @@
   },
   "scripts": {
     "open-in-browser": "npm run build:all && vscode-test-web --extensionDevelopmentPath=. .",
-    "build:all": "npm run compile && npm run build:webview",
+    "build:all": "npm run build:webview && npm run compile",
     "install:all": "npm install && cd src/webview && npm install",
     "start:webview": "cd src/webview && npm run start",
     "build:webview": "cd src/webview && npm run build",
