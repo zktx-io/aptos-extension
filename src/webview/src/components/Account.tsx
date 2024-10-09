@@ -80,6 +80,7 @@ export const Account = ({ client }: { client: Aptos | undefined }) => {
 
   useEffect(() => {
     const updateBalance = async () => {
+      state.account && setNetwork(() => state.account!.nonce.network);
       const balance = await getBalance(client, state.account);
       setState((oldState) => ({ ...oldState, balance }));
     };
@@ -184,9 +185,9 @@ export const Account = ({ client }: { client: Aptos | undefined }) => {
             setNetwork((e.target as HTMLInputElement).value as NETWORK);
         }}
       >
-        {NETWORKS.map((network, index) => (
-          <VSCodeOption key={index} value={network}>
-            {network}
+        {NETWORKS.map((item, index) => (
+          <VSCodeOption key={index} value={item}>
+            {item}
           </VSCodeOption>
         ))}
       </VSCodeDropdown>
