@@ -28,6 +28,10 @@ export const moveView = async (
     });
     return res;
   } catch (error) {
+    vscode.postMessage({
+      command: COMMENDS.OutputError,
+      data: JSON.stringify(error, null, 4),
+    });
     throw new Error(`${error}`);
   }
 };
