@@ -8,12 +8,21 @@
     "vscode": "^1.92.0"
   },
   "publisher": "zktxio",
+  "homepage": "https://docs.zktx.io/vsce/aptos/",
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/zktx-io/aptos-extension"
+  },
   "categories": [
     "Education",
     "Programming Languages",
     "Other"
   ],
   "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#06F7F7",
+    "theme": "dark"
+  },
   "activationEvents": [
     "onView:webviewViewProvider"
   ],
@@ -25,7 +34,7 @@
         {
           "id": "extensionSidebar",
           "title": "Aptos Extension",
-          "icon": "media/icon-sidebar.png"
+          "icon": "media/icon.png"
         }
       ]
     },
