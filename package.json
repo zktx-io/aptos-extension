@@ -25,7 +25,7 @@
         {
           "id": "extensionSidebar",
           "title": "Aptos Extension",
-          "icon": "media/icon.png"
+          "icon": "media/icon-sidebar.png"
         }
       ]
     },
