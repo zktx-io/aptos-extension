@@ -30,9 +30,27 @@ const styles = {
     padding: '8px 12px',
     justifyContent: 'space-between',
   },
+  titleContainer: {
+    display: 'flex',
+    alignItems: 'center',
+  },
   title: {
-    marginTop: '0px',
-    marginBottom: '0px',
+    margin: '0',
+    fontSize: '14px',
+  },
+  icon: {
+    marginRight: '4px',
+    cursor: 'default',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '12px',
+    height: '10px',
+    borderRadius: '2px',
+    border: '1px dotted var(--vscode-foreground)',
+    color: 'var(--vscode-foreground)',
+    fontSize: '8px',
+    fontWeight: 'bold' as const,
   },
   arrow: {
     transition: 'transform 0.3s ease',
@@ -57,13 +75,13 @@ const styles = {
 };
 
 export const Function = ({
-  isWrire,
+  isWrite,
   name,
   func,
   isDisable,
   onExcute,
 }: {
-  isWrire: boolean;
+  isWrite: boolean;
   name: string;
   func: MoveFunction;
   isDisable: boolean;
@@ -137,7 +155,24 @@ export const Function = ({
             setIsOpen(!isOpen);
           }}
         >
-          <div style={styles.title}>{name}</div>
+          <div style={styles.titleContainer}>
+            {isWrite ? (
+              func.is_entry ? (
+                <span style={styles.icon} title="entry">
+                  E
+                </span>
+              ) : (
+                <span style={styles.icon} title="public">
+                  P
+                </span>
+              )
+            ) : (
+              <span style={styles.icon} title="read">
+                R
+              </span>
+            )}
+            <div style={styles.title}>{name}</div>
+          </div>
           <div
             style={{
               ...styles.arrow,
@@ -220,15 +255,15 @@ export const Function = ({
                 ))}
               </>
             )}
-            {(!isWrire || result) && (
+            {(!isWrite || result) && (
               <>
                 <label style={{ fontSize: '11px', color: 'GrayText' }}>
-                  {isWrire ? 'Retuen' : 'Result'}
+                  {isWrite ? 'Retuen' : 'Result'}
                 </label>
                 <VSCodeTextArea
                   rows={5}
                   style={{ width: '100%' }}
-                  placeholder={isWrire ? 'retuen' : 'result'}
+                  placeholder={isWrite ? 'retuen' : 'result'}
                   readOnly
                   value={result}
                 />
@@ -242,7 +277,7 @@ export const Function = ({
               }}
             >
               <SpinButton
-                title={isWrire ? 'Write' : 'Read'}
+                title={isWrite ? 'Write' : 'Read'}
                 spin={isLoading}
                 disabled={isDisable || isLoading}
                 onClick={() => {
