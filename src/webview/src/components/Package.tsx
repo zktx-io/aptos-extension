@@ -120,11 +120,14 @@ export const Package = ({
       data[select].abi!.exposed_functions.forEach(
         (item) => (tempData[item.name] = item),
       );
-      const entryFunctions = Object.fromEntries(
-        Object.entries(tempData).filter(([, value]) => value.is_entry),
+      const writeFunctions = Object.fromEntries(
+        Object.entries(tempData).filter(
+          ([, value]) =>
+            value.is_entry || (value.visibility === 'public' && !value.is_view),
+        ),
       );
       setFuncWrite(
-        Object.keys(entryFunctions).length > 0 ? entryFunctions : undefined,
+        Object.keys(writeFunctions).length > 0 ? writeFunctions : undefined,
       );
       const viewFunctions = Object.fromEntries(
         Object.entries(tempData).filter(([, value]) => value.is_view),
@@ -207,7 +210,7 @@ export const Package = ({
             Object.keys(funcWrite).map((name, key) => (
               <Function
                 key={key}
-                isWrire={true}
+                isWrite={true}
                 name={name}
                 func={funcWrite[name]}
                 isDisable={isExcute}
@@ -221,7 +224,7 @@ export const Package = ({
             Object.keys(funcRead).map((name, key) => (
               <Function
                 key={key}
-                isWrire={false}
+                isWrite={false}
                 name={name}
                 func={funcRead[name]}
                 isDisable={isExcute}
