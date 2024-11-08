@@ -51,14 +51,16 @@ function App() {
   }, [setState]);
 
   useEffect(() => {
-    if (state.account && !client) {
+    if (state.account) {
       setClinet(
         new Aptos(
           new AptosConfig({ network: state.account.nonce.network as any }),
         ),
       );
+    } else {
+      setClinet(undefined);
     }
-  }, [client, state]);
+  }, [state.account]);
 
   return (
     <>
