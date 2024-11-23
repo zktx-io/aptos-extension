@@ -10,7 +10,7 @@ export function activate(context: vscode.ExtensionContext) {
     ),
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand('extension.openDocs', () => {
+    vscode.commands.registerCommand('aptos-extension.openDocs', () => {
       vscode.env.openExternal(vscode.Uri.parse('https://docs.zktx.io'));
     }),
   );

@@ -49,7 +49,7 @@
     },
     "commands": [
       {
-        "command": "extension.openDocs",
+        "command": "aptos-extension.openDocs",
         "title": "docs",
         "icon": {
           "dark": "media/docs-dark.svg",
@@ -60,7 +60,7 @@
     "menus": {
       "view/title": [
         {
-          "command": "extension.openDocs",
+          "command": "aptos-extension.openDocs",
           "when": "view == webviewViewProviderAptos",
           "group": "navigation"
         }
