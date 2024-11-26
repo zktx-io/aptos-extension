@@ -23,9 +23,7 @@
     "color": "#121919",
     "theme": "dark"
   },
-  "activationEvents": [
-    "onView:webviewViewProviderAptos"
-  ],
+  "activationEvents": [],
   "main": "./out/extension.js",
   "browser": "./out/web/extension.js",
   "contributes": {
