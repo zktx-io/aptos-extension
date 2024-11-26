@@ -5,7 +5,7 @@
   "version": "0.0.26",
   "license": "MIT",
   "engines": {
-    "vscode": "^1.92.0"
+    "vscode": "^1.95.0"
   },
   "publisher": "zktxio",
   "homepage": "https://docs.zktx.io/vsce/aptos/",
@@ -65,7 +65,18 @@
           "group": "navigation"
         }
       ]
-    }
+    },
+    "languages": [
+      {
+        "id": "move",
+        "extensions": [
+          ".move"
+        ],
+        "aliases": [
+          "Move"
+        ]
+      }
+    ]
   },
   "scripts": {
     "open-in-browser": "npm run build:all && vscode-test-web --extensionDevelopmentPath=. .",
@@ -88,12 +99,12 @@
   "devDependencies": {
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
-    "@types/vscode": "^1.92.0",
+    "@types/vscode": "^1.95.0",
     "@typescript-eslint/eslint-plugin": "^7.14.1",
     "@typescript-eslint/parser": "^7.11.0",
-    "@vscode/test-cli": "^0.0.9",
-    "@vscode/test-electron": "^2.4.0",
-    "@vscode/test-web": "^0.0.56",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "@vscode/test-web": "^0.0.64",
     "eslint": "^8.57.0",
     "path-browserify": "^1.0.1",
     "prettier": "^3.3.3",
