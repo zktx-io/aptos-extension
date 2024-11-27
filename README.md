@@ -24,7 +24,7 @@ The Aptos extension provides seamless support for compiling, deploying, and test
 ## Requirements
 
 - **Aptos CLI**: Install the Aptos command-line interface to interact with the Aptos blockchain.
-  > Note: If you are using GitHub Codespaces, please install Homebrew from https://brew.sh first to manage and install the Aptos CLI.
+  > Note: If you are using GitHub Codespaces, please install Homebrew from https://brew.sh first to manage and [install the Aptos CLI](https://aptos.dev/en/build/cli).
 - **Keyless Account**: Set up keyless account to generate wallets for contract deployment and testing. A Google account is required.
 
 ## Extension Settings
