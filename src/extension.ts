@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
-import { WebviewViewProvider } from './webviewPovider';
+import { ActivitybarPovider } from './webview/activitybarPovider';
 
 export function activate(context: vscode.ExtensionContext) {
-  const provider = new WebviewViewProvider(context);
+  const provider = new ActivitybarPovider(context);
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
-      WebviewViewProvider.viewType,
+      ActivitybarPovider.viewType,
       provider,
     ),
   );
