@@ -5,7 +5,7 @@ export const MoveToml = 'Move.toml';
 export const ByteDump = 'bytecode.dump.json';
 
 export const runBuild = (path: string, move2: boolean) => {
-  return `${COMPILER} move build-publish-payload ${!move2 ? '' : '--move-2'} --skip-fetch-latest-git-deps --package-dir ${path} --json-output-file ${path}/${ByteDump} --assume-yes`;
+  return `${COMPILER} move build-publish-payload ${!move2 ? '' : '--move-2'} --package-dir ${path} --json-output-file ${path}/${ByteDump} --assume-yes`;
 };
 
 export const runTest = (path: string, move2: boolean) => {
