@@ -13,8 +13,7 @@ import {
   MoveToml,
 } from './activitybar/src/utilities/cli';
 
-export class ActivitybarProvider implements vscode.WebviewViewProvider {
-  public static readonly viewType = 'activitybarProviderAptos';
+class ActivitybarProvider implements vscode.WebviewViewProvider {
   private _view?: vscode.WebviewView;
 
   private readonly _context;
@@ -203,3 +202,13 @@ export class ActivitybarProvider implements vscode.WebviewViewProvider {
           `;
   }
 }
+
+export const initActivityBar = (context: vscode.ExtensionContext) => {
+  const provider = new ActivitybarProvider(context);
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider(
+      'activitybarProviderAptos',
+      provider,
+    ),
+  );
+};
