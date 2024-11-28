@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { getUri } from '../utilities/getUri';
 import { getNonce } from '../utilities/getNonce';
 import { hasTerminal } from '../utilities/hasTerminal';
-import { COMMENDS } from '../webview/activitybar/src/utilities/commends';
+import { COMMENDS } from './activitybar/src/utilities/commends';
 import { FileWathcer } from '../utilities/fileWatcher';
 import { accountLoad, accountStore } from '../utilities/account';
 import { exchangeToken } from '../utilities/authCode';
@@ -13,8 +13,8 @@ import {
   MoveToml,
 } from './activitybar/src/utilities/cli';
 
-export class ActivitybarPovider implements vscode.WebviewViewProvider {
-  public static readonly viewType = 'activitybarPoviderAptos';
+export class ActivitybarProvider implements vscode.WebviewViewProvider {
+  public static readonly viewType = 'activitybarProviderAptos';
   private _view?: vscode.WebviewView;
 
   private readonly _context;

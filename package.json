@@ -39,7 +39,7 @@
     "views": {
       "extensionSidebarAptos": [
         {
-          "id": "activitybarPoviderAptos",
+          "id": "activitybarProviderAptos",
           "type": "webview",
           "name": "Aptos Extension"
         }
@@ -59,7 +59,7 @@
       "view/title": [
         {
           "command": "aptos-extension.openDocs",
-          "when": "view == activitybarPoviderAptos",
+          "when": "view == activitybarProviderAptos",
           "group": "navigation"
         }
       ]
