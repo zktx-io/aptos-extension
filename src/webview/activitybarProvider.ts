@@ -139,6 +139,9 @@ class ActivitybarProvider implements vscode.WebviewViewProvider {
               });
             }
             break;
+          case COMMENDS.PackageSelect:
+            // TODO
+            break;
           case COMMENDS.MsgInfo:
             vscode.window.showInformationMessage(data);
             break;
