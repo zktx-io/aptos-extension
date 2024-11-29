@@ -80,7 +80,6 @@
     "open-in-browser": "npm run build:all && vscode-test-web --extensionDevelopmentPath=. .",
     "build:all": "npm run build:webview && npm run compile",
     "install:all": "npm install && cd src/webview/activitybar && npm install",
-    "start:webview": "cd src/webview/activitybar && npm run start",
     "build:webview": "cd src/webview/activitybar && npm run build",
     "vscode:prepublish": "npm run package",
     "compile": "webpack",
