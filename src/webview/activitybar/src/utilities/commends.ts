@@ -4,6 +4,7 @@ export enum COMMENDS {
   LoginJwt = 'google:jwt',
   StoreAccount = 'storeAccount',
   PackageList = 'package:list',
+  PackageSelect = 'package:select',
   CLI = 'package:cli',
   Deploy = 'package:deploy',
   MsgInfo = 'message:info',
