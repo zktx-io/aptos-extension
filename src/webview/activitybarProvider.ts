@@ -14,6 +14,7 @@ import {
 } from './activitybar/src/utilities/cli';
 
 class ActivitybarProvider implements vscode.WebviewViewProvider {
+  public static readonly viewType = 'activitybarProviderAptos';
   private _view?: vscode.WebviewView;
 
   private readonly _context;
@@ -207,7 +208,7 @@ export const initActivityBar = (context: vscode.ExtensionContext) => {
   const provider = new ActivitybarProvider(context);
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
-      'activitybarProviderAptos',
+      ActivitybarProvider.viewType,
       provider,
     ),
   );
