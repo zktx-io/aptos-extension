@@ -7,11 +7,11 @@ import { FileWathcer } from '../utilities/fileWatcher';
 import { accountLoad, accountStore } from '../utilities/account';
 import { exchangeToken } from '../utilities/authCode';
 import {
-  CHANNEL,
   COMPILER,
   COMPILER_URL,
   MoveToml,
 } from './activitybar/src/utilities/cli';
+import { printOutputChannel } from '../utilities/printOutputChannel';
 
 class ActivitybarProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'activitybarProviderAptos';
@@ -20,7 +20,6 @@ class ActivitybarProvider implements vscode.WebviewViewProvider {
   private readonly _context;
   private readonly _extensionUri: vscode.Uri;
   private _fileWatcher?: FileWathcer;
-  private _outputChannel?: vscode.OutputChannel;
 
   constructor(context: vscode.ExtensionContext) {
     this._context = context;
@@ -51,7 +50,6 @@ class ActivitybarProvider implements vscode.WebviewViewProvider {
   ) {
     this._view = webviewView;
     this._fileWatcher = new FileWathcer(webviewView, this._context, MoveToml);
-    this._outputChannel = vscode.window.createOutputChannel(CHANNEL);
 
     webviewView.webview.options = {
       enableScripts: true,
@@ -149,10 +147,10 @@ class ActivitybarProvider implements vscode.WebviewViewProvider {
             vscode.window.showErrorMessage(data);
             break;
           case COMMENDS.OutputInfo:
-            this._outputChannel?.appendLine(data);
+            printOutputChannel(data);
             break;
           case COMMENDS.OutputError:
-            this._outputChannel?.appendLine(`[ERROR]\n${data}`);
+            printOutputChannel(`[ERROR]\n${data}`);
             break;
           default:
             vscode.window.showErrorMessage(
