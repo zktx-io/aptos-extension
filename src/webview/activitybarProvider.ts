@@ -5,13 +5,13 @@ import { hasTerminal } from '../utilities/hasTerminal';
 import { COMMENDS } from './activitybar/src/utilities/commends';
 import { FileWathcer } from '../utilities/fileWatcher';
 import { accountLoad, accountStore } from '../utilities/account';
+import { printOutputChannel } from '../utilities/printOutputChannel';
 import { exchangeToken } from '../utilities/authCode';
 import {
   COMPILER,
   COMPILER_URL,
   MoveToml,
 } from './activitybar/src/utilities/cli';
-import { printOutputChannel } from '../utilities/printOutputChannel';
 
 class ActivitybarProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'activitybarProviderAptos';
