@@ -23,7 +23,9 @@
     "color": "#121919",
     "theme": "dark"
   },
-  "activationEvents": [],
+  "activationEvents": [
+    "onLanguage:move"
+  ],
   "main": "./out/extension.js",
   "browser": "./out/web/extension.js",
   "contributes": {
@@ -32,6 +34,13 @@
         {
           "id": "extensionSidebarAptos",
           "title": "Aptos Extension",
+          "icon": "media/icon-side.png"
+        }
+      ],
+      "panel": [
+        {
+          "id": "extensionPanelAptos",
+          "title": "Aptos Assistant",
           "icon": "media/icon-side.png"
         }
       ]
@@ -43,6 +52,13 @@
           "type": "webview",
           "name": "Aptos Extension"
         }
+      ],
+      "extensionPanelAptos": [
+        {
+          "id": "panelProviderAptos",
+          "type": "webview",
+          "name": "Aptos Assistant"
+        }
       ]
     },
     "commands": [
@@ -53,6 +69,14 @@
           "dark": "media/docs-dark.svg",
           "light": "media/docs-light.svg"
         }
+      },
+      {
+        "command": "aptos-extension.assistant.folder",
+        "title": "Aptos Assistant"
+      },
+      {
+        "command": "aptos-extension.assistant.file",
+        "title": "Aptos Assistant"
       }
     ],
     "menus": {
@@ -61,6 +85,25 @@
           "command": "aptos-extension.openDocs",
           "when": "view == activitybarProviderAptos",
           "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "aptos-extension.assistant.file",
+          "group": "aptos-extension",
+          "when": "editorLangId == move"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "aptos-extension.assistant.folder",
+          "group": "aptos-extension",
+          "when": "explorerResourceIsFolder"
+        },
+        {
+          "command": "aptos-extension.assistant.file",
+          "group": "aptos-extension",
+          "when": "resourceExtname == '.move'"
         }
       ]
     },
