@@ -42,6 +42,27 @@ class PanelProvider implements vscode.WebviewViewProvider {
     webviewView.webview.onDidReceiveMessage(
       async ({ command, data }: { command: COMMENDS; data: any }) => {
         switch (command) {
+          case COMMENDS.AptosAssistantQuestion:
+            aptosAssistant(
+              [
+                {
+                  user: data,
+                  bot: '',
+                },
+              ],
+              (data) => {
+                this._view?.webview.postMessage({
+                  command: COMMENDS.AptosAssistantStream,
+                  data,
+                });
+              },
+              () => {
+                this._view?.webview.postMessage({
+                  command: COMMENDS.AptosAssistantStreamEnd,
+                });
+              },
+            );
+            break;
           case COMMENDS.MsgInfo:
             vscode.window.showInformationMessage(data);
             break;
@@ -64,12 +85,12 @@ class PanelProvider implements vscode.WebviewViewProvider {
     );
   }
 
-  public async sendMessage(message: any) {
+  public sendMessage(message: any) {
     switch (message.command) {
       case 'aptos-extension.assistant.file':
       case 'aptos-extension.assistant.folder':
         this._view?.webview.postMessage({ command: message.command });
-        const result = await aptosAssistant(
+        aptosAssistant(
           [
             {
               user: message.data,
