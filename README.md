@@ -11,6 +11,7 @@ The Aptos extension provides seamless support for compiling, deploying, and test
 - **Upgrade Smart Contracts**: Seamlessly upgrade and test your smart contracts.
 - **Support Move 2.0**: [Move 2.0 Release Notes](https://aptos.dev/en/build/smart-contracts/book/move-2.0)
 - **Support Move FMT**: [Introducing movefmt](https://medium.com/aptoslabs/introducing-movefmt-code-formatter-for-move-on-aptos-3aebb1bdbb85)
+- **Support Aptos Assistant**: [Aptos Assistant](https://assistant.aptosfoundation.org)
 
 ## Interface Overview
 
@@ -20,6 +21,7 @@ The Aptos extension provides seamless support for compiling, deploying, and test
 1. **Workspace**: This section of the interface allows you to `compile`, `test`, `prove`, and `deploy Smart Contracts`. If you have multiple smart contracts in your repository, you can select the specific smart contract (`Move.toml`) and proceed with compilation or deployment. Additionally, you can choose from the latest Aptos Move features such as the `formatter` and `Move 2.0` for enhanced functionality.
 1. **Package Explorer**: This section of the user interface allows you to test smart contracts. When you deploy a Smart Contract, it is automatically registered here. You can also manually enter the address of a previously deployed Smart Contract to register it. If the smart contract is loaded correctly, you will see a list of functions available to interact with the contract.
 1. **Output**: In this section, you can view the transaction execution data in raw format. Please select `Aptos Extension` in the Task.
+1. **Aptos Assistant**: This section introduces the AI-powered [Aptos Assistant](https://aptosfoundation.org/use-cases/ai), developed by Aptos in collaboration with Microsoft. It allows you to review your smart contract code, ask questions about the Aptos ecosystem, and explore the Move language. Designed to simplify Web3 development, the Assistant enhances productivity by delivering quick and accurate responses, making it an essential tool for both newcomers and experts in blockchain development.
 
 ## Requirements
 
