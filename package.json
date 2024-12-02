@@ -40,7 +40,7 @@
       "panel": [
         {
           "id": "extensionPanelAptos",
-          "title": "Aptos Assistant",
+          "title": "Aptos Assistant (beta)",
           "icon": "media/icon-side.png"
         }
       ]
@@ -57,7 +57,7 @@
         {
           "id": "panelProviderAptos",
           "type": "webview",
-          "name": "Aptos Assistant"
+          "name": "Aptos Assistant (beta)"
         }
       ]
     },
@@ -72,11 +72,11 @@
       },
       {
         "command": "aptos-extension.assistant.folder",
-        "title": "Aptos Assistant"
+        "title": "Aptos Assistant (beta)"
       },
       {
         "command": "aptos-extension.assistant.file",
-        "title": "Aptos Assistant"
+        "title": "Aptos Assistant (beta)"
       }
     ],
     "menus": {

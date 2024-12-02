@@ -1,6 +1,13 @@
 import * as vscode from 'vscode';
 import { getUri } from '../utilities/getUri';
 import { getNonce } from '../utilities/getNonce';
+import { getMoveFilesFromFolder } from '../utilities/getMoveFilesFromFolder';
+import { printOutputChannel } from '../utilities/printOutputChannel';
+import { COMMENDS } from './panel/src/utilities/commends';
+import { aptosAssistant } from '../utilities/aptosAssistant';
+
+const AuditPrompt =
+  'Audit the provided Aptos Move smart contract files one by one with file name\nSecurity\nCode Quality and Optimization\nLogical Error Detection\nRecommendations for Improvements\n';
 
 class PanelProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'panelProviderAptos';
@@ -19,14 +26,72 @@ class PanelProvider implements vscode.WebviewViewProvider {
     context: vscode.WebviewViewResolveContext,
     token: vscode.CancellationToken,
   ) {
+    this._view = webviewView;
+
     webviewView.webview.options = {
       enableScripts: true,
+      localResourceRoots: [this._extensionUri],
+      enableCommandUris: true,
     };
 
     webviewView.webview.html = this._getHtmlForWebview(
       webviewView.webview,
       this._extensionUri,
     );
+
+    webviewView.webview.onDidReceiveMessage(
+      async ({ command, data }: { command: COMMENDS; data: any }) => {
+        switch (command) {
+          case COMMENDS.MsgInfo:
+            vscode.window.showInformationMessage(data);
+            break;
+          case COMMENDS.MsgError:
+            vscode.window.showErrorMessage(data);
+            break;
+          case COMMENDS.OutputInfo:
+            printOutputChannel(data);
+            break;
+          case COMMENDS.OutputError:
+            printOutputChannel(`[ERROR]\n${data}`);
+            break;
+          default:
+            vscode.window.showErrorMessage(
+              `Unknown command received : ${command}`,
+            );
+            break;
+        }
+      },
+    );
+  }
+
+  public async sendMessage(message: any) {
+    switch (message.command) {
+      case 'aptos-extension.assistant.file':
+      case 'aptos-extension.assistant.folder':
+        this._view?.webview.postMessage({ command: message.command });
+        const result = await aptosAssistant(
+          [
+            {
+              user: message.data,
+              bot: '',
+            },
+          ],
+          (data) => {
+            this._view?.webview.postMessage({
+              command: COMMENDS.AptosAssistantStream,
+              data,
+            });
+          },
+          () => {
+            this._view?.webview.postMessage({
+              command: COMMENDS.AptosAssistantStreamEnd,
+            });
+          },
+        );
+        break;
+      default:
+        break;
+    }
   }
 
   private _getHtmlForWebview(
@@ -76,5 +141,42 @@ export function initPanel(context: vscode.ExtensionContext) {
   const provider = new PanelProvider(context);
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(PanelProvider.viewType, provider),
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      'aptos-extension.assistant.file',
+      async (uri: vscode.Uri) => {
+        let code = '';
+        const document = await vscode.workspace.openTextDocument(uri);
+        code += `// ${vscode.workspace.asRelativePath(uri, false)}\n${document.getText()}`;
+        (provider as any).sendMessage &&
+          (provider as any).sendMessage({
+            command: 'aptos-extension.assistant.file',
+            data: `${AuditPrompt}\n${code}`,
+          });
+      },
+    ),
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      'aptos-extension.assistant.folder',
+      async (uri: vscode.Uri) => {
+        const files = await getMoveFilesFromFolder(uri);
+        if (files.length > 0) {
+          let code = '';
+          for (const file of files) {
+            const document = await vscode.workspace.openTextDocument(file);
+            code += `// ${vscode.workspace.asRelativePath(file, false)}\n${document.getText()}\n\n`;
+          }
+          (provider as any).sendMessage &&
+            (provider as any).sendMessage({
+              command: 'aptos-extension.assistant.folder',
+              data: `${AuditPrompt}\n${code}`,
+            });
+        } else {
+          vscode.window.showErrorMessage('No move file found!');
+        }
+      },
+    ),
   );
 }
