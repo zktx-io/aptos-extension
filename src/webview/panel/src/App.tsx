@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from 'react';
-// import { VSCodeTextField } from '@vscode/webview-ui-toolkit/react';
+import { VSCodeTextField } from '@vscode/webview-ui-toolkit/react';
 import { marked } from 'marked';
 
 import './App.css';
 
 import { COMMENDS } from './utilities/commends';
+import { vscode } from './utilities/vscode';
 
 function App() {
-  // const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [input, setInput] = useState<string>('');
   const [html, setHtml] = useState<string>('');
-
-  /*
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-  };
-  */
 
   useEffect(() => {
     const initInfo = async () => {
@@ -28,14 +24,14 @@ function App() {
       switch (message.command) {
         case 'aptos-extension.assistant.file':
         case 'aptos-extension.assistant.folder':
-          // setIsLoading(() => true);
+          setIsLoading(() => true);
           break;
         case COMMENDS.AptosAssistantStream:
           const renderedHtml = await marked.parse(message.data);
           setHtml(() => renderedHtml);
           break;
         case COMMENDS.AptosAssistantStreamEnd:
-          // setIsLoading(() => false);
+          setIsLoading(() => false);
           break;
         default:
           break;
@@ -60,16 +56,29 @@ function App() {
         }}
         dangerouslySetInnerHTML={{ __html: html }}
       />
-      {/*<VSCodeTextField
-        disabled={isLoading}
-        value={markdown}
-        placeholder="Message..."
-        onInput={(e: any) => handleInputChange(e)}
+      <VSCodeTextField
         style={{
           backgroundColor: 'var(--vscode-editor-background)',
           color: 'var(--vscode-input-foreground)',
         }}
-      />*/}
+        disabled={isLoading}
+        value={input}
+        placeholder="Message..."
+        onChange={(event) => {
+          setInput((event.target as any)?.value || '');
+        }}
+        onKeyDown={(event) => {
+          const value = (event.target as any)?.value || '';
+          if (event.key === 'Enter' && value) {
+            vscode.postMessage({
+              command: COMMENDS.AptosAssistantQuestion,
+              data: value,
+            });
+            setInput('');
+            setIsLoading(() => true);
+          }
+        }}
+      />
     </div>
   );
 }
