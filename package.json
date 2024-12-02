@@ -122,7 +122,9 @@
   "scripts": {
     "open-in-browser": "npm run build:all && vscode-test-web --extensionDevelopmentPath=. .",
     "build:all": "npm run build:webview && npm run compile",
-    "install:all": "npm install && cd src/webview/activitybar && npm install && cd src/webview/panel && npm install",
+    "install:activitybar": "cd src/webview/activitybar && npm install",
+    "install:panel": "cd src/webview/panel && npm install",
+    "install:all": "npm install && npm run install:activitybar && npm run install:panel",
     "build:activitybar": "cd src/webview/activitybar && npm run build",
     "build:panel": "cd src/webview/panel && npm run build",
     "build:webview": "npm run build:activitybar && npm run build:panel",
