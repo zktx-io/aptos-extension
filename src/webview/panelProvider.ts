@@ -44,16 +44,11 @@ class PanelProvider implements vscode.WebviewViewProvider {
         switch (command) {
           case COMMENDS.AptosAssistantQuestion:
             aptosAssistant(
-              [
-                {
-                  user: data,
-                  bot: '',
-                },
-              ],
-              (data) => {
+              data,
+              (stream) => {
                 this._view?.webview.postMessage({
                   command: COMMENDS.AptosAssistantStream,
-                  data,
+                  data: stream,
                 });
               },
               () => {
@@ -89,18 +84,16 @@ class PanelProvider implements vscode.WebviewViewProvider {
     switch (message.command) {
       case 'aptos-extension.assistant.file':
       case 'aptos-extension.assistant.folder':
-        this._view?.webview.postMessage({ command: message.command });
+        this._view?.webview.postMessage({
+          command: message.command,
+          data: 'Code Analysis...',
+        });
         aptosAssistant(
-          [
-            {
-              user: message.data,
-              bot: '',
-            },
-          ],
-          (data) => {
+          message.data,
+          (stream) => {
             this._view?.webview.postMessage({
               command: COMMENDS.AptosAssistantStream,
-              data,
+              data: stream,
             });
           },
           () => {

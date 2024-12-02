@@ -1,34 +1,43 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { VSCodeTextField } from '@vscode/webview-ui-toolkit/react';
-import { marked } from 'marked';
 
 import './App.css';
 
 import { COMMENDS } from './utilities/commends';
 import { vscode } from './utilities/vscode';
+import { User } from './components/User';
+import { Bot } from './components/Bot';
 
 function App() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [input, setInput] = useState<string>('');
-  const [html, setHtml] = useState<string>('');
+  const [htmlHistory, setHtmlHistory] = useState<
+    { isBot: boolean; content: string }[]
+  >([]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const initInfo = async () => {
-      const info =
-        'This window is for testing the [```Aptos Assistant```](https://assistant.aptosfoundation.org). Try using the ```Aptos Assistant (beta) context menu``` in the Explorer or Editor window.';
-      const renderedHtml = await marked.parse(info);
-      setHtml(() => renderedHtml);
-    };
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [htmlHistory]);
+
+  useEffect(() => {
     const handleMessage = async (event: any) => {
       const message = event.data;
       switch (message.command) {
         case 'aptos-extension.assistant.file':
         case 'aptos-extension.assistant.folder':
           setIsLoading(() => true);
+          setHtmlHistory((old) => [
+            ...old,
+            { isBot: false, content: message.data },
+            { isBot: true, content: '' },
+          ]);
           break;
         case COMMENDS.AptosAssistantStream:
-          const renderedHtml = await marked.parse(message.data);
-          setHtml(() => renderedHtml);
+          setHtmlHistory((old) => [
+            ...old.slice(0, -1),
+            { isBot: true, content: message.data },
+          ]);
           break;
         case COMMENDS.AptosAssistantStreamEnd:
           setIsLoading(() => false);
@@ -38,11 +47,6 @@ function App() {
       }
     };
     window.addEventListener('message', handleMessage);
-
-    initInfo();
-    return () => {
-      window.removeEventListener('message', handleMessage);
-    };
   }, []);
 
   return (
@@ -51,34 +55,70 @@ function App() {
         style={{
           flex: 1,
           overflowY: 'auto',
-          color: 'var(--vscode-foreground)',
-          borderBottom: '1px solid var(--vscode-editorGroup-border)',
         }}
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
-      <VSCodeTextField
+      >
+        {htmlHistory.length === 0 ? (
+          <div
+            style={{
+              flex: 1,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              color: 'var(--vscode-foreground)',
+              fontSize: '1.2rem',
+              textAlign: 'center',
+              height: '100%',
+            }}
+          >
+            No messages yet. Start a conversation!
+          </div>
+        ) : (
+          htmlHistory.map((item, key) =>
+            item.isBot ? (
+              <Bot key={key} data={item.content} />
+            ) : (
+              <User key={key} data={item.content} />
+            ),
+          )
+        )}
+        <div ref={messagesEndRef} />
+      </div>
+      <div
         style={{
-          backgroundColor: 'var(--vscode-editor-background)',
-          color: 'var(--vscode-input-foreground)',
+          position: 'sticky',
+          bottom: 0,
+          paddingBottom: '1rem',
         }}
-        disabled={isLoading}
-        value={input}
-        placeholder="Message..."
-        onChange={(event) => {
-          setInput((event.target as any)?.value || '');
-        }}
-        onKeyDown={(event) => {
-          const value = (event.target as any)?.value || '';
-          if (event.key === 'Enter' && value) {
-            vscode.postMessage({
-              command: COMMENDS.AptosAssistantQuestion,
-              data: value,
-            });
-            setInput('');
-            setIsLoading(() => true);
-          }
-        }}
-      />
+      >
+        <VSCodeTextField
+          style={{
+            width: '100%',
+            color: 'var(--vscode-input-foreground)',
+          }}
+          disabled={isLoading}
+          value={input}
+          placeholder="Message..."
+          onChange={(event) => {
+            !isLoading && setInput((event.target as any)?.value || '');
+          }}
+          onKeyDown={(event) => {
+            const value = (event.target as any)?.value || '';
+            if (event.key === 'Enter' && value && !isLoading) {
+              vscode.postMessage({
+                command: COMMENDS.AptosAssistantQuestion,
+                data: value,
+              });
+              setInput('');
+              setIsLoading(() => true);
+              setHtmlHistory((old) => [
+                ...old,
+                { isBot: false, content: value },
+                { isBot: true, content: '' },
+              ]);
+            }
+          }}
+        />
+      </div>
     </div>
   );
 }

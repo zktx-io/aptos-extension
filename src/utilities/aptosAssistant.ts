@@ -5,16 +5,22 @@ const getContent = (str: string) => {
   return choices[0]?.delta?.content || '';
 };
 
-export interface AuditCodeRequest {
+let isLoading: boolean = false;
+let history: {
   user: string;
   bot: string;
-}
+}[] = [];
 
 export const aptosAssistant = async (
-  requests: AuditCodeRequest[],
+  request: string,
   onData: (data: string) => void,
   onEnd: () => void,
 ): Promise<void> => {
+  if (isLoading) {
+    return;
+  }
+  isLoading = true;
+  history.push({ user: request, bot: '' });
   try {
     const response = await fetch(
       'https://assistant.aptosfoundation.org/api/assistant/chat',
@@ -30,7 +36,7 @@ export const aptosAssistant = async (
             top: 3,
             suggest_followup_questions: false,
           },
-          history: requests,
+          history,
         }),
       },
     );
@@ -80,11 +86,15 @@ export const aptosAssistant = async (
     }
 
     if (onEnd) {
+      isLoading = false;
+      history[history.length - 1].bot = resultText;
       onEnd();
     }
   } catch (error) {
+    history.slice(0, -1);
     vscode.window.showErrorMessage(`Unknown error: ${error}`);
     if (onEnd) {
+      isLoading = false;
       onEnd();
     }
   }
