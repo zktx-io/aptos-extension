@@ -4,7 +4,7 @@ import { getNonce } from '../utilities/getNonce';
 import { getMoveFilesFromFolder } from '../utilities/getMoveFilesFromFolder';
 import { printOutputChannel } from '../utilities/printOutputChannel';
 import { COMMENDS } from './panel/src/utilities/commends';
-import { aptosAssistant } from '../utilities/aptosAssistant';
+import { aptosAssistant, getHistory } from '../utilities/aptosAssistant';
 
 const AuditPrompt =
   'Audit the provided Aptos Move smart contract files one by one with file name\nSecurity\nCode Quality and Optimization\nLogical Error Detection\nRecommendations for Improvements\n';
@@ -42,6 +42,12 @@ class PanelProvider implements vscode.WebviewViewProvider {
     webviewView.webview.onDidReceiveMessage(
       async ({ command, data }: { command: COMMENDS; data: any }) => {
         switch (command) {
+          case COMMENDS.Env:
+            this._view?.webview.postMessage({
+              command: COMMENDS.AptosAssistantHistory,
+              data: getHistory(),
+            });
+            break;
           case COMMENDS.AptosAssistantQuestion:
             aptosAssistant(
               data,

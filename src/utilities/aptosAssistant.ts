@@ -6,10 +6,12 @@ const getContent = (str: string) => {
 };
 
 let isLoading: boolean = false;
-let history: {
+const history: {
   user: string;
   bot: string;
 }[] = [];
+
+export const getHistory = () => history;
 
 export const aptosAssistant = async (
   request: string,

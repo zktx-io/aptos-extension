@@ -9,6 +9,7 @@ import { User } from './components/User';
 import { Bot } from './components/Bot';
 
 function App() {
+  const initialized = useRef<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [input, setInput] = useState<string>('');
   const [htmlHistory, setHtmlHistory] = useState<
@@ -33,6 +34,14 @@ function App() {
             { isBot: true, content: '' },
           ]);
           break;
+        case COMMENDS.AptosAssistantHistory:
+          const temp: { isBot: boolean; content: string }[] = [];
+          message.data.forEach((item: { user: string; bot: string }) => {
+            temp.push({ isBot: false, content: item.user });
+            item.bot && temp.push({ isBot: true, content: item.bot });
+          });
+          setHtmlHistory(() => temp);
+          break;
         case COMMENDS.AptosAssistantStream:
           setHtmlHistory((old) => [
             ...old.slice(0, -1),
@@ -46,6 +55,12 @@ function App() {
           break;
       }
     };
+
+    if (!initialized.current) {
+      initialized.current = true;
+      vscode.postMessage({ command: COMMENDS.Env });
+    }
+
     window.addEventListener('message', handleMessage);
   }, []);
 
