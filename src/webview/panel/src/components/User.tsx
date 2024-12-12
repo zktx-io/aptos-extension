@@ -4,7 +4,8 @@ export const User = ({ data }: { data: string }) => {
       style={{
         display: 'flex',
         justifyContent: 'flex-end',
-        marginBottom: '1rem',
+        marginTop: '0.5rem',
+        marginBottom: '0.5rem',
       }}
     >
       <div
