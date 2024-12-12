@@ -11,11 +11,11 @@ export const Bot = ({ data }: { data: string }) => {
       code: ({ text, lang }: { text: string; lang?: string }) => {
         const language = lang && hljs.getLanguage(lang) ? lang : 'plaintext';
         const highlighted = hljs.highlight(text, { language }).value;
-        return `<pre style="overflow-x: auto;"><code class="hljs ${language}">${highlighted}</code></pre>`;
+        return `<pre style="overflow-x: auto; font-family: monospace;"><code class="hljs ${language}">${highlighted}</code></pre>`;
       },
     };
     marked.use({ renderer });
-    const renderedHtml = marked.parse(data, { async: false });
+    const renderedHtml = marked.parse(data, { async: false, gfm: true });
     setHtml(() => renderedHtml);
   }, [data]);
 
@@ -25,8 +25,6 @@ export const Bot = ({ data }: { data: string }) => {
         width: '80%',
         textAlign: 'left',
         marginBottom: '1rem',
-        fontFamily: 'monospace',
-        whiteSpace: 'pre-wrap',
       }}
       dangerouslySetInnerHTML={{ __html: html }}
     />
