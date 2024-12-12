@@ -44,22 +44,22 @@ class PanelProvider implements vscode.WebviewViewProvider {
         switch (command) {
           case COMMENDS.Env:
             this._view?.webview.postMessage({
-              command: COMMENDS.AptosAssistantHistory,
+              command: COMMENDS.AiHistory,
               data: getHistory(),
             });
             break;
-          case COMMENDS.AptosAssistantQuestion:
+          case COMMENDS.AiQuestion:
             aptosAssistant(
               data,
               (stream) => {
                 this._view?.webview.postMessage({
-                  command: COMMENDS.AptosAssistantStream,
+                  command: COMMENDS.AiStream,
                   data: stream,
                 });
               },
               () => {
                 this._view?.webview.postMessage({
-                  command: COMMENDS.AptosAssistantStreamEnd,
+                  command: COMMENDS.AiStreamEnd,
                 });
               },
             );
@@ -98,13 +98,13 @@ class PanelProvider implements vscode.WebviewViewProvider {
           message.data,
           (stream) => {
             this._view?.webview.postMessage({
-              command: COMMENDS.AptosAssistantStream,
+              command: COMMENDS.AiStream,
               data: stream,
             });
           },
           () => {
             this._view?.webview.postMessage({
-              command: COMMENDS.AptosAssistantStreamEnd,
+              command: COMMENDS.AiStreamEnd,
             });
           },
         );

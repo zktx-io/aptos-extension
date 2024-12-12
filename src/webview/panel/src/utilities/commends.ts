@@ -1,9 +1,9 @@
 export enum COMMENDS {
   Env = 'env',
-  AptosAssistantHistory = 'aptos:assistant:history',
-  AptosAssistantQuestion = 'aptos:assistant:question',
-  AptosAssistantStream = 'aptos:assistant:stream',
-  AptosAssistantStreamEnd = 'aptos:assistant:stream:end',
+  AiHistory = 'ai:history',
+  AiQuestion = 'ai:question',
+  AiStream = 'ai:stream',
+  AiStreamEnd = 'ai:stream:end',
   MsgInfo = 'message:info',
   MsgError = 'message:error',
   OutputInfo = 'output:info',

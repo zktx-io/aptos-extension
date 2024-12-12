@@ -34,7 +34,7 @@ function App() {
             { isBot: true, content: '' },
           ]);
           break;
-        case COMMENDS.AptosAssistantHistory:
+        case COMMENDS.AiHistory:
           const temp: { isBot: boolean; content: string }[] = [];
           message.data.forEach((item: { user: string; bot: string }) => {
             temp.push({ isBot: false, content: item.user });
@@ -42,13 +42,13 @@ function App() {
           });
           setHtmlHistory(() => temp);
           break;
-        case COMMENDS.AptosAssistantStream:
+        case COMMENDS.AiStream:
           setHtmlHistory((old) => [
             ...old.slice(0, -1),
             { isBot: true, content: message.data },
           ]);
           break;
-        case COMMENDS.AptosAssistantStreamEnd:
+        case COMMENDS.AiStreamEnd:
           setIsLoading(() => false);
           break;
         default:
@@ -120,7 +120,7 @@ function App() {
             const value = (event.target as any)?.value || '';
             if (event.key === 'Enter' && value && !isLoading) {
               vscode.postMessage({
-                command: COMMENDS.AptosAssistantQuestion,
+                command: COMMENDS.AiQuestion,
                 data: value,
               });
               setInput('');
