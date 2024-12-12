@@ -20,20 +20,6 @@ export const User = ({ data }: { data: string }) => {
         }}
       >
         {data}
-        <div
-          style={{
-            content: '""',
-            position: 'absolute',
-            bottom: '10px',
-            right: '-10px',
-            width: '0',
-            height: '0',
-            borderTop: '10px solid var(--vscode-input-background)',
-            borderLeft: '10px solid transparent',
-            borderRight: 'none',
-            borderBottom: 'none',
-          }}
-        />
       </div>
     </div>
   );
