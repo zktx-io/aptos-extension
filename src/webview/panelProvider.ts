@@ -50,7 +50,7 @@ class PanelProvider implements vscode.WebviewViewProvider {
             break;
           case COMMENDS.AiQuestion:
             aptosAssistant(
-              data,
+              { code: false, content: data },
               (stream) => {
                 this._view?.webview.postMessage({
                   command: COMMENDS.AiStream,
@@ -92,10 +92,10 @@ class PanelProvider implements vscode.WebviewViewProvider {
       case 'aptos-extension.assistant.folder':
         this._view?.webview.postMessage({
           command: message.command,
-          data: 'Code Analysis...',
+          data: { code: true, content: '' },
         });
         aptosAssistant(
-          message.data,
+          { code: true, content: message.data },
           (stream) => {
             this._view?.webview.postMessage({
               command: COMMENDS.AiStream,

@@ -3,22 +3,24 @@ import { VSCodeTextField } from '@vscode/webview-ui-toolkit/react';
 
 import './App.css';
 
-import { COMMENDS } from './utilities/commends';
+import { COMMENDS, RequestData } from './utilities/commends';
 import { vscode } from './utilities/vscode';
 import { User } from './components/User';
 import { Bot } from './components/Bot';
+import { Skeleton } from './components/Skeleton';
 
 function App() {
   const initialized = useRef<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [input, setInput] = useState<string>('');
-  const [htmlHistory, setHtmlHistory] = useState<
-    { isBot: boolean; content: string }[]
-  >([]);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [htmlHistory, setHtmlHistory] = useState<(string | RequestData)[]>([]);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop =
+        scrollContainerRef.current.scrollHeight;
+    }
   }, [htmlHistory]);
 
   useEffect(() => {
@@ -30,23 +32,26 @@ function App() {
           setIsLoading(() => true);
           setHtmlHistory((old) => [
             ...old,
-            { isBot: false, content: message.data },
-            { isBot: true, content: '' },
+            { code: true, content: message.data },
+            '',
           ]);
           break;
         case COMMENDS.AiHistory:
-          const temp: { isBot: boolean; content: string }[] = [];
-          message.data.forEach((item: { user: string; bot: string }) => {
-            temp.push({ isBot: false, content: item.user });
-            item.bot && temp.push({ isBot: true, content: item.bot });
+          const temp: (string | RequestData)[] = [];
+          message.data.forEach((item: { user: RequestData; bot: string }) => {
+            temp.push(item.user, item.bot);
           });
           setHtmlHistory(() => temp);
+          if (scrollContainerRef.current) {
+            setTimeout(() => {
+              scrollContainerRef.current!.scrollTop =
+                scrollContainerRef.current!.scrollHeight;
+            }, 5);
+          }
+          initialized.current = true;
           break;
         case COMMENDS.AiStream:
-          setHtmlHistory((old) => [
-            ...old.slice(0, -1),
-            { isBot: true, content: message.data },
-          ]);
+          setHtmlHistory((old) => [...old.slice(0, -1), message.data]);
           break;
         case COMMENDS.AiStreamEnd:
           setIsLoading(() => false);
@@ -57,19 +62,25 @@ function App() {
     };
 
     if (!initialized.current) {
-      initialized.current = true;
       vscode.postMessage({ command: COMMENDS.Env });
     }
 
     window.addEventListener('message', handleMessage);
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
   }, []);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <div
+        ref={scrollContainerRef}
         style={{
           flex: 1,
           overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         {htmlHistory.length === 0 ? (
@@ -85,18 +96,24 @@ function App() {
               height: '100%',
             }}
           >
-            No messages yet. Start a conversation!
+            👋 Hello, Aptos! Start a conversation. 💬
           </div>
         ) : (
           htmlHistory.map((item, key) =>
-            item.isBot ? (
-              <Bot key={key} data={item.content} />
+            typeof item === 'string' ? (
+              isLoading && key === htmlHistory.length - 1 && !item ? (
+                <Skeleton key={key} />
+              ) : (
+                <Bot key={key} data={item} />
+              )
             ) : (
-              <User key={key} data={item.content} />
+              <User
+                key={key}
+                data={item.code ? 'Code Analysis...' : item.content}
+              />
             ),
           )
         )}
-        <div ref={messagesEndRef} />
       </div>
       <div
         style={{
@@ -110,7 +127,7 @@ function App() {
             width: '100%',
             color: 'var(--vscode-input-foreground)',
           }}
-          disabled={isLoading}
+          disabled={isLoading || !initialized.current}
           value={input}
           placeholder="Message..."
           onChange={(event) => {
@@ -127,8 +144,8 @@ function App() {
               setIsLoading(() => true);
               setHtmlHistory((old) => [
                 ...old,
-                { isBot: false, content: value },
-                { isBot: true, content: '' },
+                { code: false, content: value },
+                '',
               ]);
             }
           }}

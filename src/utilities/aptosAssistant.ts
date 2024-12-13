@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { RequestData } from '../webview/panel/src/utilities/commends';
 
 const getContent = (str: string) => {
   const { choices } = JSON.parse(str);
@@ -7,14 +8,14 @@ const getContent = (str: string) => {
 
 let isLoading: boolean = false;
 const history: {
-  user: string;
+  user: RequestData;
   bot: string;
 }[] = [];
 
 export const getHistory = () => history;
 
 export const aptosAssistant = async (
-  request: string,
+  request: RequestData,
   onData: (data: string) => void,
   onEnd: () => void,
 ): Promise<void> => {
@@ -38,7 +39,10 @@ export const aptosAssistant = async (
             top: 3,
             suggest_followup_questions: false,
           },
-          history,
+          history: history.map((item) => ({
+            user: item.user.content,
+            bot: item.bot,
+          })),
         }),
       },
     );

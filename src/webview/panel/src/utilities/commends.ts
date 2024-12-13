@@ -9,3 +9,8 @@ export enum COMMENDS {
   OutputInfo = 'output:info',
   OutputError = 'output:error',
 }
+
+export interface RequestData {
+  code: boolean;
+  content: string;
+}

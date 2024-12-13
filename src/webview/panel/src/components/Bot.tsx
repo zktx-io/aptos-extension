@@ -5,7 +5,6 @@ import 'highlight.js/styles/github-dark.css';
 
 export const Bot = ({ data }: { data: string }) => {
   const [html, setHtml] = useState<string>('');
-
   useEffect(() => {
     const renderer = {
       code: ({ text, lang }: { text: string; lang?: string }) => {
@@ -18,13 +17,11 @@ export const Bot = ({ data }: { data: string }) => {
     const renderedHtml = marked.parse(data, { async: false, gfm: true });
     setHtml(() => renderedHtml);
   }, [data]);
-
   return (
     <div
       style={{
         width: '80%',
         textAlign: 'left',
-        marginBottom: '1rem',
       }}
       dangerouslySetInnerHTML={{ __html: html }}
     />
