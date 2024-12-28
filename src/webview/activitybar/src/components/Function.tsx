@@ -93,6 +93,7 @@ export const Function = ({
     name: string,
     func: MoveFunction,
     inputValues: Array<string | string[]>,
+    typeArguments: string[],
   ) => Promise<MoveValue[] | undefined>;
 }) => {
   const [state] = useRecoilState(STATE);
@@ -131,7 +132,7 @@ export const Function = ({
       setInputErrors(errors);
       const result =
         !!state.account && errors.every((value) => value === false)
-          ? await onExcute(name, func, inputValues)
+          ? await onExcute(name, func, inputValues, [])
           : undefined;
       if (result) {
         setResult(JSON.stringify(result, null, 4));

@@ -84,6 +84,7 @@ export const Package = ({
     name: string,
     func: MoveFunction,
     inputValues: Array<string | string[]>,
+    typeArguments: string[],
   ): Promise<MoveValue[] | undefined> => {
     if (state.account && state.account.zkAddress && module) {
       try {
@@ -103,6 +104,7 @@ export const Package = ({
           `${packageId}::${module}::${name}`,
           parameterFilter(func),
           inputValues,
+          typeArguments,
         );
         setIsExcute(false);
         return undefined;
