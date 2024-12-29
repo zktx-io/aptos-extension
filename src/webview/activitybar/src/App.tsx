@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { Aptos, AptosConfig } from '@aptos-labs/ts-sdk';
+import { Buffer } from 'buffer';
 
 import './App.css';
 
@@ -11,6 +12,8 @@ import { ExplorerPackage } from './components/ExplorerPackage';
 import { Workspace } from './components/Workspace';
 import { COMMENDS } from './utilities/commends';
 import { STATE } from './recoil';
+
+window.Buffer = Buffer;
 
 function App() {
   const initialized = useRef<boolean>(false);

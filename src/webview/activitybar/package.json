@@ -13,6 +13,7 @@
     "@aptos-labs/ts-sdk": "^1.33.1",
     "@vscode/webview-ui-toolkit": "^1.4.0",
     "bignumber.js": "^9.1.2",
+    "buffer": "^6.0.3",
     "crypto-js": "^4.2.0",
     "jose": "^5.9.6",
     "querystring": "^0.2.1",
