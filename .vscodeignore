@@ -7,10 +7,10 @@ out/test/**
 
 # Ignore source code
 src/**
-!src/webview/activitybar/build/
-!src/webview/activitybar/build/**
-!src/webview/panel/build/
-!src/webview/panel/build/**
+!src/webview/activitybar/dist/
+!src/webview/activitybar/dist/**
+!src/webview/panel/dist/
+!src/webview/panel/dist/**
 
 # Ignore Misc
 .yarnrc

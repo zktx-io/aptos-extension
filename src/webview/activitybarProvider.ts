@@ -170,18 +170,15 @@ class ActivitybarProvider implements vscode.WebviewViewProvider {
       'src',
       'webview',
       'activitybar',
-      'build',
-      'static',
-      'css',
-      'main.css',
+      'dist',
+      'assets',
+      'index.css',
     ]);
     const scriptUri = getUri(webview, extensionUri, [
       'src',
       'webview',
       'activitybar',
-      'build',
-      'static',
-      'js',
+      'dist',
       'main.js',
     ]);
     const nonce = getNonce();
