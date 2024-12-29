@@ -8,7 +8,8 @@ export const runBuild = (path: string, move2: boolean) => {
   return `${COMPILER} move build-publish-payload ${!move2 ? '' : '--move-2'} --package-dir ${path} --json-output-file ${path}/${ByteDump} --assume-yes`;
 };
 
-export const runTest = (path: string, move2: boolean) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const runTest = (path: string, _move2: boolean) => {
   return `${COMPILER} move test --skip-fetch-latest-git-deps --package-dir ${path}`;
 };
 

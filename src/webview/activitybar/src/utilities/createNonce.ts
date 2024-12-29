@@ -6,7 +6,8 @@ import {
 import { NETWORK } from '../recoil';
 
 export const createNonce = async (
-  network: NETWORK,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _network: NETWORK,
 ): Promise<{
   nonce: string;
   expiration: number;
