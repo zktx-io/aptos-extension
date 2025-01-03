@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { Aptos, AptosConfig } from '@aptos-labs/ts-sdk';
+import { Aptos, AptosConfig, Network } from '@aptos-labs/ts-sdk';
 
 import './App.css';
 
@@ -9,7 +9,7 @@ import { Account } from './components/Account';
 import { ExplorerPackage } from './components/ExplorerPackage';
 import { Workspace } from './components/Workspace';
 import { COMMENDS } from './utilities/commends';
-import { STATE } from './recoil';
+import { IAccount, STATE } from './recoil';
 
 function App() {
   const initialized = useRef<boolean>(false);
@@ -18,7 +18,15 @@ function App() {
   const [state, setState] = useRecoilState(STATE);
 
   useEffect(() => {
-    const handleMessage = async (event: any) => {
+    const handleMessage = async (
+      event: MessageEvent<{
+        command: COMMENDS;
+        data: {
+          hasTerminal: boolean;
+          account?: IAccount;
+        };
+      }>,
+    ) => {
       const message = event.data;
       switch (message.command) {
         case COMMENDS.Env:
@@ -53,7 +61,9 @@ function App() {
     if (state.account) {
       setClinet(
         new Aptos(
-          new AptosConfig({ network: state.account.nonce.network as any }),
+          new AptosConfig({
+            network: state.account.nonce.network as unknown as Network,
+          }),
         ),
       );
     } else {

@@ -64,7 +64,7 @@ export const makeParams = (
   }
   if (paramType.startsWith('vector')) {
     const tempType = paramType.replace('vector<', '').slice(0, -1);
-    let temp = [];
+    const temp = [];
     for (const item of value) {
       temp.push(makeParams(tempType, item));
     }

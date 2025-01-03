@@ -130,7 +130,7 @@ export const Workspace = ({
         onChange={(e) => {
           if (e.target) {
             const path = (e.target as HTMLInputElement).value;
-            if (!!path) {
+            if (path) {
               setState((oldState) => ({ ...oldState, ...packageSelect(path) }));
               vscode.postMessage({
                 command: COMMENDS.PackageSelect,
