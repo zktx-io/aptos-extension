@@ -17,7 +17,7 @@ export const moveCall = async (
       const transaction = await client.transaction.build.simple({
         sender: address,
         data: {
-          function: target as any,
+          function: target as `${string}::${string}::${string}`,
           functionArguments: inputValues.map((value, i) =>
             makeParams(parameters[i], value),
           ),

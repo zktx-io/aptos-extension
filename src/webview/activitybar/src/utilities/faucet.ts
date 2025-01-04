@@ -11,7 +11,7 @@ export const faucet = async (account: IAccount): Promise<boolean> => {
         },
       );
       return !!res.ok;
-    } catch (error) {
+    } catch {
       return false;
     }
   }

@@ -16,7 +16,7 @@ export const getBalance = async (
       });
       const bn = new BigNumber(balance).shiftedBy(-1 * APT_DECIMALS);
       return `${bn.toFormat()} APT`;
-    } catch (error) {
+    } catch {
       return undefined;
     }
   } else {

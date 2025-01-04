@@ -18,7 +18,7 @@ export const moveView = async (
 ): Promise<MoveValue[]> => {
   try {
     const payload: InputViewFunctionData = {
-      function: target as any,
+      function: target as `${string}::${string}::${string}`,
       functionArguments,
     };
     const res = await client.view({ payload });
