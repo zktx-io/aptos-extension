@@ -1,6 +1,7 @@
 import {
   Account,
   EphemeralKeyPair,
+  Hex,
   SigningSchemeInput,
 } from '@aptos-labs/ts-sdk';
 import { NETWORK } from '../recoil';
@@ -22,7 +23,7 @@ export const createNonce = async (
   return {
     nonce,
     expiration: expiryDateSecs,
-    randomness: `0x${Buffer.from(blinder).toString('hex')}`,
+    randomness: Hex.hexInputToString(blinder),
     ephemeralKeyPair: {
       publicKey: account.publicKey.toString(),
       privateKey: account.privateKey.toString(),
