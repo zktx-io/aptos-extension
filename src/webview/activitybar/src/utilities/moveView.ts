@@ -6,7 +6,7 @@ import {
   SimpleEntryFunctionArgumentTypes,
 } from '@aptos-labs/ts-sdk';
 import { vscode } from './vscode';
-import { COMMENDS } from './commends';
+import { COMMANDS } from './commands';
 
 export const moveView = async (
   client: Aptos,
@@ -23,13 +23,13 @@ export const moveView = async (
     };
     const res = await client.view({ payload });
     vscode.postMessage({
-      command: COMMENDS.OutputInfo,
+      command: COMMANDS.OutputInfo,
       data: JSON.stringify(res, null, 4),
     });
     return res;
   } catch (error) {
     vscode.postMessage({
-      command: COMMENDS.OutputError,
+      command: COMMANDS.OutputError,
       data: JSON.stringify(error, null, 4),
     });
     throw new Error(`${error}`);

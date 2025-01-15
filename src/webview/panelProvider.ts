@@ -3,7 +3,7 @@ import { getUri } from '../utilities/getUri';
 import { getNonce } from '../utilities/getNonce';
 import { getMoveFilesFromFolder } from '../utilities/getMoveFilesFromFolder';
 import { printOutputChannel } from '../utilities/printOutputChannel';
-import { COMMENDS } from './panel/src/utilities/commends';
+import { COMMANDS } from './panel/src/utilities/commands';
 import { aptosAssistant, getHistory } from '../utilities/aptosAssistant';
 
 const AuditPrompt =
@@ -37,40 +37,40 @@ class PanelProvider implements vscode.WebviewViewProvider {
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
     webviewView.webview.onDidReceiveMessage(
-      async ({ command, data }: { command: COMMENDS; data: any }) => {
+      async ({ command, data }: { command: COMMANDS; data: any }) => {
         switch (command) {
-          case COMMENDS.Env:
+          case COMMANDS.Env:
             this._view?.webview.postMessage({
-              command: COMMENDS.AiHistory,
+              command: COMMANDS.AiHistory,
               data: getHistory(),
             });
             break;
-          case COMMENDS.AiQuestion:
+          case COMMANDS.AiQuestion:
             aptosAssistant(
               { code: false, content: data },
               (stream) => {
                 this._view?.webview.postMessage({
-                  command: COMMENDS.AiStream,
+                  command: COMMANDS.AiStream,
                   data: stream,
                 });
               },
               () => {
                 this._view?.webview.postMessage({
-                  command: COMMENDS.AiStreamEnd,
+                  command: COMMANDS.AiStreamEnd,
                 });
               },
             );
             break;
-          case COMMENDS.MsgInfo:
+          case COMMANDS.MsgInfo:
             vscode.window.showInformationMessage(data);
             break;
-          case COMMENDS.MsgError:
+          case COMMANDS.MsgError:
             vscode.window.showErrorMessage(data);
             break;
-          case COMMENDS.OutputInfo:
+          case COMMANDS.OutputInfo:
             printOutputChannel(data);
             break;
-          case COMMENDS.OutputError:
+          case COMMANDS.OutputError:
             printOutputChannel(`[ERROR]\n${data}`);
             break;
           default:
@@ -95,13 +95,13 @@ class PanelProvider implements vscode.WebviewViewProvider {
           { code: true, content: message.data },
           (stream) => {
             this._view?.webview.postMessage({
-              command: COMMENDS.AiStream,
+              command: COMMANDS.AiStream,
               data: stream,
             });
           },
           () => {
             this._view?.webview.postMessage({
-              command: COMMENDS.AiStreamEnd,
+              command: COMMANDS.AiStreamEnd,
             });
           },
         );

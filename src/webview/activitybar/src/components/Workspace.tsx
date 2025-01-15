@@ -10,7 +10,7 @@ import {
 } from '@vscode/webview-ui-toolkit/react';
 import { Aptos } from '@aptos-labs/ts-sdk';
 import { vscode } from '../utilities/vscode';
-import { COMMENDS } from '../utilities/commends';
+import { COMMANDS } from '../utilities/commands';
 import { SpinButton } from './SpinButton';
 import { STATE } from '../recoil';
 import { packagePublish } from '../utilities/packagePublish';
@@ -41,7 +41,7 @@ export const Workspace = ({
     const handleMessage = async (event: any) => {
       const message = event.data;
       switch (message.command) {
-        case COMMENDS.PackageList:
+        case COMMANDS.PackageList:
           {
             const temp = (
               message.data as { path: string; content: string }[]
@@ -69,7 +69,7 @@ export const Workspace = ({
             }
           }
           break;
-        case COMMENDS.Deploy:
+        case COMMANDS.Deploy:
           try {
             if (!!state.account?.zkAddress && !!client) {
               const { packageId } = await packagePublish(
@@ -133,7 +133,7 @@ export const Workspace = ({
             if (path) {
               setState((oldState) => ({ ...oldState, ...packageSelect(path) }));
               vscode.postMessage({
-                command: COMMENDS.PackageSelect,
+                command: COMMANDS.PackageSelect,
                 data: path,
               });
             }
@@ -192,7 +192,7 @@ export const Workspace = ({
           onClick={() => {
             state.path &&
               vscode.postMessage({
-                command: COMMENDS.CLI,
+                command: COMMANDS.CLI,
                 data: runBuild(state.path, !!(state as any).move2),
               });
           }}
@@ -213,7 +213,7 @@ export const Workspace = ({
           onClick={() => {
             state.path &&
               vscode.postMessage({
-                command: COMMENDS.CLI,
+                command: COMMANDS.CLI,
                 data: runProve(state.path, !!(state as any).move2),
               });
           }}
@@ -243,7 +243,7 @@ export const Workspace = ({
           onClick={() => {
             state.path &&
               vscode.postMessage({
-                command: COMMENDS.CLI,
+                command: COMMANDS.CLI,
                 data: runTest(state.path, !!(state as any).move2),
               });
           }}
@@ -264,7 +264,7 @@ export const Workspace = ({
           onClick={() => {
             state.path &&
               vscode.postMessage({
-                command: COMMENDS.CLI,
+                command: COMMANDS.CLI,
                 data: runFormatter(state.path),
               });
           }}
@@ -290,7 +290,7 @@ export const Workspace = ({
           if (selected) {
             setIsLoading(true);
             vscode.postMessage({
-              command: COMMENDS.Deploy,
+              command: COMMANDS.Deploy,
               data: selected.path,
             });
           }
