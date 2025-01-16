@@ -66,7 +66,19 @@ export const makeParams = (
     const tempType = paramType.replace('vector<', '').slice(0, -1);
     const temp = [];
     for (const item of value) {
-      temp.push(makeParams(tempType, item));
+      switch (tempType) {
+        case 'u8':
+        case 'u16':
+        case 'u32':
+        case 'u64':
+        case 'u128':
+        case 'u256':
+          temp.push(parseInt(item, 16));
+          break;
+        default:
+          temp.push(makeParams(tempType, item));
+          break;
+      }
     }
     return temp;
   }
