@@ -105,7 +105,7 @@ export const VectorInputFields = ({
         <div style={{ flexDirection: 'column' }}>
           <VSCodeTextArea
             rows={3}
-            style={{ width: '100%' }}
+            style={{ width: '100%', fontFamily: 'monospace' }}
             placeholder={paramType}
             value={hexInput}
             onInput={handleInput}
