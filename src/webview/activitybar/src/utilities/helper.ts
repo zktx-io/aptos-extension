@@ -49,10 +49,11 @@ export const makeParams = (
       case 'u8':
       case 'u16':
       case 'u32':
+        return parseInt(value);
       case 'u64':
       case 'u128':
       case 'u256':
-        return parseInt(value);
+        return BigInt(value);
       case 'bool':
         return value.toLowerCase() === 'true';
       case 'address':
@@ -70,10 +71,12 @@ export const makeParams = (
         case 'u8':
         case 'u16':
         case 'u32':
+          temp.push(parseInt(item, 16));
+          break;
         case 'u64':
         case 'u128':
         case 'u256':
-          temp.push(parseInt(item, 16));
+          temp.push(BigInt(item));
           break;
         default:
           temp.push(makeParams(tempType, item));
