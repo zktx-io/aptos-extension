@@ -83,7 +83,7 @@ export const Package = ({
   const onExcute = async (
     name: string,
     func: MoveFunction,
-    inputValues: Array<string | string[]>,
+    inputValues: Array<string>,
     typeArguments: string[],
   ): Promise<MoveValue[] | undefined> => {
     if (state.account && state.account.zkAddress && module) {

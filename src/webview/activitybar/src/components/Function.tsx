@@ -6,7 +6,6 @@ import {
 import { MoveFunction, MoveValue } from '@aptos-labs/ts-sdk';
 import { getInterfaceType, validateInput } from '../utilities/helper';
 import { parameterFilter } from '../utilities/parameterFilter';
-import { VectorInputFields } from './VectorInputFields';
 import { STATE } from '../recoil';
 import { useRecoilState } from 'recoil';
 import { SpinButton } from './SpinButton';
@@ -92,19 +91,19 @@ export const Function = ({
   onExcute: (
     name: string,
     func: MoveFunction,
-    inputValues: Array<string | string[]>,
+    inputValues: Array<string>,
     typeArguments: string[],
   ) => Promise<MoveValue[] | undefined>;
 }) => {
   const [state] = useRecoilState(STATE);
   const [parameters, setParameters] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [inputValues, setInputValues] = useState<Array<string | string[]>>([]);
+  const [inputValues, setInputValues] = useState<Array<string>>([]);
   const [inputErrors, setInputErrors] = useState<boolean[]>([]);
   const [result, setResult] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleInputChange = (index: number, value: string | string[]) => {
+  const handleInputChange = (index: number, value: string) => {
     const newInputValues = [...inputValues];
     newInputValues[index] = value;
     setInputValues(newInputValues);
@@ -113,7 +112,7 @@ export const Function = ({
   const handleExcute = async (
     name: string,
     func: MoveFunction,
-    inputValues: Array<string | string[]>,
+    inputValues: Array<string>,
   ) => {
     try {
       setIsLoading(true);
@@ -244,17 +243,32 @@ export const Function = ({
                       </>
                     )}
                     {getInterfaceType(item) === 'vector' && (
-                      <VectorInputFields
-                        error={
-                          inputErrors[key]
-                            ? `Invalid value for type ${item}`
-                            : undefined
-                        }
-                        paramType={item}
-                        update={(params: string[]) => {
-                          handleInputChange(key, params);
-                        }}
-                      />
+                      <>
+                        <VSCodeTextArea
+                          rows={3}
+                          style={{ width: '100%' }}
+                          placeholder={`${item} - JSON`}
+                          value={inputValues[key] as string}
+                          onInput={(e) =>
+                            handleInputChange(
+                              key,
+                              (e.target as HTMLTextAreaElement).value,
+                            )
+                          }
+                        />
+                        {inputErrors[key] && (
+                          <span
+                            style={{
+                              color: 'red',
+                              fontSize: '11px',
+                              wordWrap: 'break-word',
+                              whiteSpace: 'pre-wrap',
+                            }}
+                          >
+                            Invalid value for type {item}
+                          </span>
+                        )}
+                      </>
                     )}
                   </div>
                 ))}

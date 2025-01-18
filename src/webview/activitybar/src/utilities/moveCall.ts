@@ -8,7 +8,7 @@ export const moveCall = async (
   account: IAccount,
   target: string,
   parameters: string[],
-  inputValues: Array<string | string[]>,
+  inputValues: Array<string>,
   typeArguments: string[],
 ): Promise<void> => {
   if (account.nonce.privateKey && account.zkAddress) {
