@@ -22,13 +22,13 @@ The Aptos extension provides seamless support for compiling, deploying, and test
 1. **Package Explorer**: This section of the user interface allows you to test smart contracts. When you deploy a Smart Contract, it is automatically registered here. You can also manually enter the address of a previously deployed Smart Contract to register it. If the smart contract is loaded correctly, you will see a list of functions available to interact with the contract.
 1. **Move Call**: Input Format for Multi-Vectors Using JSON Strings. When working with multi-vectors, the input must be provided in JSON string format. JSON is ideal for representing nested structures and allows handling multi-dimensional arrays effectively.
 
-    |Type|JSON|
-    |------|-------|
-    |`vector<u8>` | [1, 2, 3, 255]|
-    |`vector<vector<u128>>`|[["1", "555"], ["123", "456", "789"]]|
-    |`vector<vector<vector<bool>>>`|[[[true, false], [true]], [[false, true]]]|
+   | Type                           | JSON                                       |
+   | ------------------------------ | ------------------------------------------ |
+   | `vector<u8>`                   | [1, 2, 3, 255]                             |
+   | `vector<vector<u128>>`         | [["1", "555"], ["123", "456", "789"]]      |
+   | `vector<vector<vector<bool>>>` | [[[true, false], [true]], [[false, true]]] |
 
-    ![Vector](https://docs.zktx.io/images/aptos-extension-vector.png)
+   ![Vector](https://docs.zktx.io/images/aptos-extension-vector.png)
 
 1. **Output**: In this section, you can view the transaction execution data in raw format. Please select `Aptos Extension` in the Task.
    ![Aptos Extension](https://docs.zktx.io/images/aptos-extension-assistant.png)
