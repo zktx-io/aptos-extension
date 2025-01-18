@@ -101,13 +101,12 @@ const processAndConvertVectors = (data: any, paramType: string): any => {
       case 'u8':
       case 'u16':
       case 'u32':
-        return parseInt(data).toString();
+        return parseInt(data);
       case 'u64':
       case 'u128':
       case 'u256':
         return BigInt(data);
       case 'bool':
-        return data.toLowerCase() === 'true';
       case 'address':
       case '0x1::string::String':
         return data;
