@@ -3,7 +3,6 @@ import { useRecoilState } from 'recoil';
 import { parse } from 'smol-toml';
 import {
   VSCodeButton,
-  VSCodeCheckbox,
   VSCodeDivider,
   VSCodeDropdown,
   VSCodeOption,
@@ -16,7 +15,6 @@ import { STATE } from '../recoil';
 import { packagePublish } from '../utilities/packagePublish';
 import {
   dataGet,
-  dataSet,
   packageAdd,
   packageSelect,
 } from '../utilities/stateController';
@@ -150,33 +148,6 @@ export const Workspace = ({
       <div
         style={{
           display: 'flex',
-          justifyContent: 'flex-end',
-          alignItems: 'center',
-          marginTop: '8px',
-          width: '100%',
-        }}
-      >
-        <VSCodeCheckbox
-          style={{ display: 'flex', flexDirection: 'row-reverse' }}
-          checked={!!(state as any).move2}
-          onChange={(e) => {
-            dataSet({
-              ...dataGet(),
-              move2: (e.target as any).checked,
-            });
-            setState((oldState) => ({
-              ...oldState,
-              move2: (e.target as any).checked,
-            }));
-          }}
-        >
-          Move 2.0
-        </VSCodeCheckbox>
-      </div>
-
-      <div
-        style={{
-          display: 'flex',
           justifyContent: 'space-between',
           marginBottom: '4px',
         }}
@@ -193,7 +164,7 @@ export const Workspace = ({
             state.path &&
               vscode.postMessage({
                 command: COMMANDS.CLI,
-                data: runBuild(state.path, !!(state as any).move2),
+                data: runBuild(state.path),
               });
           }}
         >
@@ -214,7 +185,7 @@ export const Workspace = ({
             state.path &&
               vscode.postMessage({
                 command: COMMANDS.CLI,
-                data: runProve(state.path, !!(state as any).move2),
+                data: runProve(state.path),
               });
           }}
         >
@@ -244,7 +215,7 @@ export const Workspace = ({
             state.path &&
               vscode.postMessage({
                 command: COMMANDS.CLI,
-                data: runTest(state.path, !!(state as any).move2),
+                data: runTest(state.path),
               });
           }}
         >
